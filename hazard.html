@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hazardous Work Portal - Samadhan Hub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 font-sans text-gray-800">
+
+    <!-- Navigation Bar -->
+    <nav class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+            <h1 class="text-xl font-bold text-red-600">Samadhan Hub</h1>
+            <div class="space-x-4">
+                <a href="index.html" class="text-gray-600 hover:text-red-600">Home</a>
+                <a href="customer.html" class="text-gray-600 hover:text-red-600">Customer</a>
+                <a href="helper.html" class="text-gray-600 hover:text-red-600">Helper</a>
+                <a href="expert.html" class="text-gray-600 hover:text-red-600">Expert</a>
+                <a href="hazard.html" class="text-red-600 font-semibold">Hazard</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="max-w-2xl mx-auto px-4 py-12">
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
+            <span class="bg-red-100 text-red-800 text-xs font-semibold px-2.5 py-0.5 rounded">Restricted Clearance</span>
+            <h2 class="text-2xl font-bold mt-2 mb-2">Hazardous Work Restricted Portal</h2>
+            <p class="text-gray-500 text-sm mb-6">High-risk wildlife and emergency removal alerts (Hidden from general public):</p>
+            
+            <div id="hazardQueue" class="space-y-4">
+                <!-- Dynamically loaded emergency alerts appear here -->
+            </div>
+        </div>
+    </main>
+
+    <script>
+        window.onload = function() {
+            const queue = document.getElementById('hazardQueue');
+            let tasks = JSON.parse(localStorage.getItem('hazard')) || [];
+            
+            if (tasks.length === 0) {
+                queue.innerHTML = `<p class="text-sm text-gray-400 italic">No emergency high-risk alerts pending right now.</p>`;
+                return;
+            }
+
+            queue.innerHTML = "";
+            tasks.forEach((task) => {
+                queue.innerHTML += `
+                    <div class="border rounded-lg p-4 bg-red-50 border-red-200 flex justify-between items-center">
+                        <div>
+                            <p class="font-semibold text-sm text-red-900">🚨 ${task.desc}</p>
+                            <p class="text-xs text-red-700">From: ${task.name} • Time: ${task.time}</p>
+                        </div>
+                        <button onclick="alert('Emergency response deployed successfully.')" class="bg-red-600 text-white text-xs px-3 py-1.5 rounded hover:bg-red-700 transition">Dispatch Response</button>
+                    </div>
+                `;
+            });
+        };
+    </script>
+</body>
+</html>

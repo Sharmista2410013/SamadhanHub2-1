@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expert Portal - Samadhan Hub</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio"></script>
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('samadhan_theme') || 'dark';
+            if (savedTheme === 'light') { document.documentElement.classList.add('light-mode'); }
+        })();
+    </script>
+    <style>
+        /* Proper Light Mode Color Theory */
+        html.light-mode body { background-color: #f8fafc !important; color: #0f172a !important; }
+        html.light-mode nav { background-color: rgba(255, 255, 255, 0.8) !important; border-color: #e2e8f0 !important; }
+        html.light-mode .bg-slate-900\/90, 
+        html.light-mode .bg-slate-900\/80, 
+        html.light-mode .bg-slate-900 { background-color: #ffffff !important; border-color: #cbd5e1 !important; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05) !important; }
+        html.light-mode input, 
+        html.light-mode select, 
+        html.light-mode textarea { background-color: #f8fafc !important; color: #0f172a !important; border-color: #cbd5e1 !important; }
+        html.light-mode input:focus, 
+        html.light-mode select:focus, 
+        html.light-mode textarea:focus { border-color: #059669 !important; background-color: #ffffff !important; }
+        html.light-mode h1, html.light-mode h2, html.light-mode h3 { color: #0f172a !important; }
+        html.light-mode label { color: #334155 !important; font-weight: 700 !important; }
+        html.light-mode .text-slate-400, html.light-mode .text-slate-300 { color: #475569 !important; }
+    </style>
+</head>
+<body class="bg-slate-950 font-sans text-slate-100 antialiased min-h-screen flex flex-col justify-between selection:bg-emerald-500 selection:text-white">
+
+    <!-- Top Glow Accent -->
+    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-96 bg-emerald-600/10 blur-[130px] pointer-events-none"></div>
+
+    <!-- Navigation Bar -->
+    <nav class="relative z-50 max-w-7xl w-full mx-auto px-6 py-6 flex justify-between items-center border-b border-slate-800/60 backdrop-blur-md">
+        <a href="index.html" class="flex items-center gap-3 group">
+            <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-500 flex items-center justify-center text-white text-lg shadow-lg shadow-emerald-500/30">
+                🎓
+            </div>
+            <span class="text-xl font-black tracking-tight uppercase">SAMADHAN <span class="text-emerald-500 font-extrabold">HUB</span></span>
+        </a>
+        <div class="flex items-center space-x-6 text-sm font-medium">
+            <a href="index.html" class="hover:text-emerald-500 transition">Overview</a>
+            <a href="customer.html" class="hover:text-emerald-500 transition">Customer Portal</a>
+            <a href="helper.html" class="hover:text-emerald-500 transition">Student Helper</a>
+            <a href="expert.html" class="text-emerald-500 font-semibold">Expert Portal</a>
+            <button onclick="toggleGlobalTheme()" id="themeToggleBtn" class="bg-slate-900 text-slate-200 border border-slate-700 px-3 py-2 rounded-xl text-xs font-semibold transition flex items-center gap-2 shadow-sm">
+                <span id="themeIcon">🌙</span> <span id="themeText">Dark</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="relative z-10 max-w-4xl mx-auto px-6 py-16 w-full space-y-8">
+        <div class="text-center">
+            <span class="bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-300 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-widest">
+                Academic Advisory & Expert Registry
+            </span>
+            <h1 class="text-3xl md:text-4xl font-black mt-3">Expert Guidance & Consultation</h1>
+            <p class="text-sm mt-1">Register your expert profile, shop details, and technical consultancy services.</p>
+        </div>
+
+        <div class="bg-slate-900/90 border border-slate-800/80 p-8 rounded-3xl shadow-2xl backdrop-blur-md">
+            <form onsubmit="event.preventDefault(); alert('Expert profile submitted successfully!');" class="space-y-5">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs uppercase tracking-wider mb-2">Expert Name</label>
+                        <input type="text" required placeholder="e.g., Dr. Rahman / Engineer Rahim" class="w-full text-sm px-4 py-3 rounded-xl border focus:outline-none transition">
+                    </div>
+                    <div>
+                        <label class="block text-xs uppercase tracking-wider mb-2">Shop / Lab / Office Name</label>
+                        <input type="text" required placeholder="e.g., Rajshahi Tech & Circuit Hub" class="w-full text-sm px-4 py-3 rounded-xl border focus:outline-none transition">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs uppercase tracking-wider mb-2">Google Map Link / Location URL</label>
+                    <input type="url" required placeholder="https://maps.google.com/..." class="w-full text-sm px-4 py-3 rounded-xl border focus:outline-none transition">
+                </div>
+
+                <div>
+                    <label class="block text-xs uppercase tracking-wider mb-2">Areas of Expertise / Technical Services</label>
+                    <textarea rows="4" required placeholder="Describe your technical specialization, circuit troubleshooting, or academic consultation areas..." class="w-full text-sm px-4 py-3 rounded-xl border focus:outline-none transition"></textarea>
+                </div>
+
+                <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-emerald-600/20 transition text-sm">
+                    Register as Expert ⚡
+                </button>
+            </form>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="relative z-10 max-w-7xl w-full mx-auto px-6 py-8 border-t border-slate-800/80 text-center text-xs text-slate-500">
+        <p>Samadhan Hub Expert Advisory</p>
+    </footer>
+
+    <script>
+        function toggleGlobalTheme() {
+            const html = document.documentElement;
+            const isLight = html.classList.toggle('light-mode');
+            if (isLight) {
+                localStorage.setItem('samadhan_theme', 'light');
+                document.getElementById('themeIcon').innerText = '☀️';
+                document.getElementById('themeText').innerText = 'Light';
+            } else {
+                localStorage.setItem('samadhan_theme', 'dark');
+                document.getElementById('themeIcon').innerText = '🌙';
+                document.getElementById('themeText').innerText = 'Dark';
+            }
+        }
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('samadhan_theme') || 'dark';
+            const icon = document.getElementById('themeIcon');
+            const text = document.getElementById('themeText');
+            if (savedTheme === 'light') {
+                icon.innerText = '☀️';
+                text.innerText = 'Light';
+            } else {
+                icon.innerText = '🌙';
+                text.innerText = 'Dark';
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Helper Portal - Samadhan Hub</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio"></script>
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('samadhan_theme') || 'dark';
+            if (savedTheme === 'light') { document.documentElement.classList.add('light-mode'); }
+        })();
+    </script>
+    <style>
+        html.light-mode body { background-color: #f8fafc !important; color: #0f172a !important; }
+        html.light-mode .bg-slate-950 { background-color: #f1f5f9 !important; }
+        html.light-mode .bg-slate-900\/90, html.light-mode .bg-slate-900\/80, html.light-mode .bg-slate-900 { background-color: #ffffff !important; border-color: #e2e8f0 !important; color: #0f172a !important; }
+        html.light-mode .bg-slate-950\/60, html.light-mode .bg-slate-950\/80 { background-color: #f8fafc !important; border-color: #cbd5e1 !important; }
+        html.light-mode .text-white { color: #0f172a !important; }
+        html.light-mode .text-slate-300, html.light-mode .text-slate-400 { color: #475569 !important; }
+        html.light-mode input, html.light-mode select { background-color: #ffffff !important; color: #0f172a !important; border-color: #cbd5e1 !important; }
+    </style>
+</head>
+<body class="bg-slate-950 font-sans text-slate-100 antialiased min-h-screen flex flex-col justify-between selection:bg-emerald-500 selection:text-white">
+
+    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-96 bg-emerald-600/10 blur-[130px] pointer-events-none"></div>
+
+    <nav class="relative z-50 max-w-7xl w-full mx-auto px-6 py-6 flex justify-between items-center border-b border-slate-800/60 backdrop-blur-md">
+        <a href="index.html" class="flex items-center gap-3 group">
+            <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-500 flex items-center justify-center text-white text-lg shadow-lg shadow-emerald-500/30">
+                🤝
+            </div>
+            <span class="text-xl font-black tracking-tight text-white uppercase">SAMADHAN <span class="text-emerald-400">HUB</span></span>
+        </a>
+        <div class="flex items-center space-x-6 text-sm font-medium text-slate-300">
+            <a href="index.html" class="hover:text-white transition">Overview</a>
+            <a href="customer.html" class="hover:text-white transition">Customer Portal</a>
+            <a href="helper.html" class="text-emerald-400 font-semibold">Student Helper</a>
+            <a href="expert.html" class="hover:text-white transition">Expert Portal</a>
+            <button onclick="toggleGlobalTheme()" id="themeToggleBtn" class="bg-slate-900 text-slate-300 border border-slate-800 px-3 py-2 rounded-xl text-xs font-semibold transition flex items-center gap-2">
+                <span id="themeIcon">🌙</span> <span id="themeText">Dark</span>
+            </button>
+        </div>
+    </nav>
+
+    <main class="relative z-10 max-w-4xl mx-auto px-6 py-12 w-full">
+        
+        <div id="signupSection">
+            <div class="mb-8 text-center">
+                <span class="bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-widest">
+                    Student Registration Gateway
+                </span>
+                <h1 class="text-3xl md:text-4xl font-black text-white mt-3">Join as Student Helper</h1>
+                <p class="text-slate-400 text-sm mt-1">Configure your profile with your preferred region to access local tasks.</p>
+            </div>
+
+            <div class="bg-slate-900/90 border border-slate-800/80 p-8 rounded-3xl shadow-2xl backdrop-blur-md max-w-2xl mx-auto">
+                <form id="helperSignupForm" class="space-y-5">
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Full Name</label>
+                        <input type="text" id="helperName" required placeholder="e.g., XYZ" class="w-full bg-slate-950 text-slate-200 text-sm px-4 py-3 rounded-xl border border-slate-800 focus:outline-none focus:border-emerald-500 transition">
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Institution Name</label>
+                            <input type="text" id="helperInst" required placeholder="e.g., Rajshahi University" class="w-full bg-slate-950 text-slate-200 text-sm px-4 py-3 rounded-xl border border-slate-800 focus:outline-none focus:border-emerald-500 transition">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Department</label>
+                            <input type="text" id="helperDept" required placeholder="e.g., EEE / CSE" class="w-full bg-slate-950 text-slate-200 text-sm px-4 py-3 rounded-xl border border-slate-800 focus:outline-none focus:border-emerald-500 transition">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Preferred Region</label>
+                        <select id="helperArea" required class="w-full bg-slate-950 text-slate-200 text-sm px-4 py-3 rounded-xl border border-slate-800 focus:outline-none focus:border-emerald-500 transition cursor-pointer">
+                            <option value="" disabled selected>Select service region...</option>
+                            <option value="Rajshahi - Boalia Upazila">Rajshahi - Boalia Upazila</option>
+                            <option value="Rajshahi - Motihar Upazila">Rajshahi - Motihar Upazila</option>
+                            <option value="Rajshahi - Rajpara Upazila">Rajshahi - Rajpara Upazila</option>
+                            <option value="Rajshahi - Paba Upazila">Rajshahi - Paba Upazila</option>
+                            <option value="Dhaka - Dhanmondi">Dhaka - Dhanmondi</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-emerald-600/30 transition text-sm mt-4">
+                        Create Helper Account & View Jobs →
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div id="dashboardSection" class="hidden space-y-8">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-800 pb-6">
+                <div>
+                    <span class="bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-widest">
+                        Active Helper Dashboard
+                    </span>
+                    <h1 class="text-3xl font-black text-white mt-2">Tasks for <span id="welcomeArea" class="text-emerald-400">Region</span></h1>
+                    <p class="text-slate-400 text-sm mt-1">Logged in as <strong id="welcomeName" class="text-slate-200"></strong></p>
+                </div>
+                <button onclick="logoutHelper()" class="bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 px-4 py-2 rounded-xl text-xs font-semibold transition">
+                    Switch Account / Logout
+                </button>
+            </div>
+
+            <div id="jobQueueContainer" class="space-y-4"></div>
+        </div>
+
+    </main>
+
+    <footer class="relative z-10 max-w-7xl w-full mx-auto px-6 py-8 border-t border-slate-800/80 text-center text-xs text-slate-500">
+        <p>Samadhan Hub Student Operations</p>
+    </footer>
+
+    <script>
+        const helperData = JSON.parse(localStorage.getItem('samadhan_helper_profile'));
+        if (helperData) { showDashboard(helperData); }
+
+        document.getElementById('helperSignupForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const profile = {
+                name: document.getElementById('helperName').value.trim(),
+                inst: document.getElementById('helperInst').value,
+                dept: document.getElementById('helperDept').value,
+                area: document.getElementById('helperArea').value
+            };
+            localStorage.setItem('samadhan_helper_profile', JSON.stringify(profile));
+            showDashboard(profile);
+        });
+
+        function showDashboard(profile) {
+            document.getElementById('signupSection').classList.add('hidden');
+            document.getElementById('dashboardSection').classList.remove('hidden');
+            document.getElementById('welcomeName').innerText = profile.name;
+            document.getElementById('welcomeArea').innerText = profile.area;
+            loadJobs(profile.area);
+        }
+
+        function loadJobs(helperArea) {
+            const helperProfile = JSON.parse(localStorage.getItem('samadhan_helper_profile') || '{}');
+            const allTasks = JSON.parse(localStorage.getItem('samadhan_tasks') || '[]');
+            const container = document.getElementById('jobQueueContainer');
+
+            const matchingTasks = allTasks.filter(t => t.area === helperArea || !t.area);
+
+            if (matchingTasks.length === 0) {
+                container.innerHTML = `
+                    <div class="bg-slate-900/80 border border-slate-800 p-10 rounded-3xl text-center text-slate-400 text-sm">
+                        <div class="text-3xl mb-2">📭</div>
+                        <p class="font-semibold text-white">No active tasks found for ${helperArea}.</p>
+                    </div>`;
+            } else {
+                container.innerHTML = matchingTasks.map((t) => {
+                    const isAssigned = t.status === 'Accepted';
+                    const isMyTask = isAssigned && t.helper && helperProfile.name && t.helper.name.toLowerCase() === helperProfile.name.toLowerCase();
+
+                    return `
+                        <div class="bg-slate-900/80 border border-slate-800/80 p-6 rounded-2xl space-y-4 shadow-xl">
+                            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                                <div class="space-y-1">
+                                    <div class="flex items-center gap-2">
+                                        <span class="bg-emerald-500/10 text-emerald-400 text-xs font-bold px-2.5 py-0.5 rounded uppercase">${t.jobType || 'Task'}</span>
+                                        <span class="text-xs text-slate-400">📍 ${t.area}</span>
+                                        <span class="text-xs px-2 py-0.5 rounded font-bold ${t.status === 'Accepted' ? 'bg-emerald-500/20 text-emerald-300' : 'bg-amber-500/20 text-amber-300'}">${t.status}</span>
+                                    </div>
+                                    <h3 class="font-bold text-white text-lg">Customer: ${t.name}</h3>
+                                    <p class="text-slate-300 text-sm">${t.desc}</p>
+                                    <div class="text-xs text-slate-400 pt-1">💰 Wage: <strong class="text-emerald-400">${t.wages}</strong></div>
+                                </div>
+
+                                <div>
+                                    ${!isAssigned ? `
+                                        <button onclick="acceptTask('${t.id}')" class="bg-emerald-600 hover:bg-emerald-500 text-white font-semibold px-6 py-3 rounded-xl transition text-sm shadow-lg shadow-emerald-600/20 whitespace-nowrap">
+                                            Accept Task ⚡
+                                        </button>
+                                    ` : isMyTask ? `
+                                        <span class="text-xs bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 px-4 py-2 rounded-xl font-bold flex items-center gap-1.5">✓ Assigned to You</span>
+                                    ` : `
+                                        <span class="text-xs bg-slate-800 text-slate-400 px-4 py-2 rounded-xl font-medium">Claimed by another helper</span>
+                                    `}
+                                </div>
+                            </div>
+
+                            ${isMyTask ? `
+                                <div class="mt-4 pt-4 border-t border-slate-800 space-y-3 bg-slate-950/60 p-4 rounded-xl">
+                                    <span class="text-xs font-bold text-emerald-400 uppercase tracking-wider">💬 Live Chat with Customer (${t.name})</span>
+                                    <div id="chatBox_${t.id}" class="h-36 overflow-y-auto bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-2 text-xs">
+                                        ${t.messages && t.messages.length > 0 
+                                            ? t.messages.map(m => `<div><strong class="${m.sender === helperProfile.name ? 'text-emerald-400' : 'text-indigo-400'}">${m.sender}:</strong> <span class="text-slate-200">${m.text}</span></div>`).join('')
+                                            : '<p class="text-slate-500 text-center italic mt-10">No messages yet. Say hello to the customer!</p>'
+                                        }
+                                    </div>
+                                    <div class="flex gap-2">
+                                        <input type="text" id="msgInput_${t.id}" placeholder="Type message to customer..." class="flex-1 bg-slate-950 text-slate-200 text-xs px-3 py-2.5 rounded-xl border border-slate-800 focus:outline-none focus:border-emerald-500">
+                                        <button onclick="sendHelperMessage('${t.id}')" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition">Send</button>
+                                    </div>
+                                </div>
+                            ` : ''}
+                        </div>
+                    `;
+                }).join('');
+            }
+        }
+
+        function acceptTask(taskId) {
+            const helperProfile = JSON.parse(localStorage.getItem('samadhan_helper_profile'));
+            if(!helperProfile) return;
+
+            const tasks = JSON.parse(localStorage.getItem('samadhan_tasks') || '[]');
+            const taskIndex = tasks.findIndex(t => t.id === taskId);
+
+            if(taskIndex !== -1) {
+                tasks[taskIndex].status = 'Accepted';
+                tasks[taskIndex].helper = {
+                    name: helperProfile.name,
+                    inst: helperProfile.inst,
+                    dept: helperProfile.dept
+                };
+                localStorage.setItem('samadhan_tasks', JSON.stringify(tasks));
+                loadJobs(helperProfile.area);
+            }
+        }
+
+        function sendHelperMessage(taskId) {
+            const input = document.getElementById(`msgInput_${taskId}`);
+            const text = input.value.trim();
+            if(!text) return;
+
+            const helperProfile = JSON.parse(localStorage.getItem('samadhan_helper_profile'));
+            const tasks = JSON.parse(localStorage.getItem('samadhan_tasks') || '[]');
+            const task = tasks.find(t => t.id === taskId);
+
+            if(task) {
+                if(!task.messages) task.messages = [];
+                task.messages.push({ sender: helperProfile.name, text: text, time: new Date().toLocaleTimeString() });
+                localStorage.setItem('samadhan_tasks', JSON.stringify(tasks));
+                input.value = '';
+                loadJobs(helperProfile.area);
+            }
+        }
+
+        function logoutHelper() {
+            localStorage.removeItem('samadhan_helper_profile');
+            location.reload();
+        }
+
+        function toggleGlobalTheme() {
+            const html = document.documentElement;
+            const isLight = html.classList.toggle('light-mode');
+            if (isLight) {
+                localStorage.setItem('samadhan_theme', 'light');
+                document.getElementById('themeIcon').innerText = '☀️';
+                document.getElementById('themeText').innerText = 'Light';
+            } else {
+                localStorage.setItem('samadhan_theme', 'dark');
+                document.getElementById('themeIcon').innerText = '🌙';
+                document.getElementById('themeText').innerText = 'Dark';
+            }
+        }
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('samadhan_theme') || 'dark';
+            if (savedTheme === 'light') {
+                document.getElementById('themeIcon').innerText = '☀️';
+                document.getElementById('themeText').innerText = 'Light';
+            }
+        });
+    </script>
+</body>
+</html>

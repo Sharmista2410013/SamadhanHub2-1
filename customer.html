@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Portal - Samadhan Hub</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio"></script>
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('samadhan_theme') || 'dark';
+            if (savedTheme === 'light') { document.documentElement.classList.add('light-mode'); }
+        })();
+    </script>
+    <style>
+        html.light-mode body { background-color: #f8fafc !important; color: #0f172a !important; }
+        html.light-mode .bg-slate-950 { background-color: #f1f5f9 !important; }
+        html.light-mode .bg-slate-900\/90, html.light-mode .bg-slate-900\/80, html.light-mode .bg-slate-900 { background-color: #ffffff !important; border-color: #e2e8f0 !important; color: #0f172a !important; }
+        html.light-mode .bg-slate-950\/60, html.light-mode .bg-slate-950\/80 { background-color: #f8fafc !important; border-color: #cbd5e1 !important; }
+        html.light-mode .text-white { color: #0f172a !important; }
+        html.light-mode .text-slate-300, html.light-mode .text-slate-400 { color: #475569 !important; }
+        html.light-mode input, html.light-mode select, html.light-mode textarea { background-color: #ffffff !important; color: #0f172a !important; border-color: #cbd5e1 !important; }
+    </style>
+</head>
+<body class="bg-slate-950 font-sans text-slate-100 antialiased min-h-screen flex flex-col justify-between selection:bg-emerald-500 selection:text-white">
+
+    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-96 bg-emerald-600/10 blur-[130px] pointer-events-none"></div>
+
+    <nav class="relative z-50 max-w-7xl w-full mx-auto px-6 py-6 flex justify-between items-center border-b border-slate-800/60 backdrop-blur-md">
+        <a href="index.html" class="flex items-center gap-3 group">
+            <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-500 flex items-center justify-center text-white text-lg shadow-lg shadow-emerald-500/30">
+                🛍️
+            </div>
+            <span class="text-xl font-black tracking-tight text-white uppercase">SAMADHAN <span class="text-emerald-400">HUB</span></span>
+        </a>
+        <div class="flex items-center space-x-6 text-sm font-medium text-slate-300">
+            <a href="index.html" class="hover:text-white transition">Overview</a>
+            <a href="customer.html" class="text-emerald-400 font-semibold">Customer Portal</a>
+            <a href="helper.html" class="hover:text-white transition">Student Helper</a>
+            <a href="expert.html" class="hover:text-white transition">Expert Portal</a>
+            <button onclick="toggleGlobalTheme()" id="themeToggleBtn" class="bg-slate-900 text-slate-300 border border-slate-800 px-3 py-2 rounded-xl text-xs font-semibold transition flex items-center gap-2">
+                <span id="themeIcon">🌙</span> <span id="themeText">Dark</span>
+            </button>
+        </div>
+    </nav>
+
+    <main class="relative z-10 max-w-4xl mx-auto px-6 py-12 w-full space-y-12">
+        
+        <div class="text-center">
+            <span class="bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-widest">
+                Customer Dispatch Gateway
+            </span>
+            <h1 class="text-3xl md:text-4xl font-black text-white mt-3">Post a Task Request</h1>
+            <p class="text-slate-400 text-sm mt-1">Submit your grocery pickup, delivery, or general task for regional student helpers.</p>
+        </div>
+
+        <div class="bg-slate-900/90 border border-slate-800/80 p-8 rounded-3xl shadow-2xl backdrop-blur-md">
+            <form id="taskForm" class="space-y-5">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Customer Name</label>
+                        <input type="text" id="custName" required placeholder="e.g., ABC" class="w-full bg-slate-950 text-slate-200 text-sm px-4 py-3 rounded-xl border border-slate-800 focus:outline-none focus:border-emerald-500 transition">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Service Region</label>
+                        <select id="custArea" required class="w-full bg-slate-950 text-slate-200 text-sm px-4 py-3 rounded-xl border border-slate-800 focus:outline-none focus:border-emerald-500 transition cursor-pointer">
+                            <option value="" disabled selected>Select location...</option>
+                            <option value="Rajshahi - Boalia Upazila">Rajshahi - Boalia Upazila</option>
+                            <option value="Rajshahi - Motihar Upazila">Rajshahi - Motihar Upazila</option>
+                            <option value="Rajshahi - Rajpara Upazila">Rajshahi - Rajpara Upazila</option>
+                            <option value="Rajshahi - Paba Upazila">Rajshahi - Paba Upazila</option>
+                            <option value="Dhaka - Dhanmondi">Dhaka - Dhanmondi</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Task Type</label>
+                        <select id="custJobType" required class="w-full bg-slate-950 text-slate-200 text-sm px-4 py-3 rounded-xl border border-slate-800 focus:outline-none focus:border-emerald-500 transition cursor-pointer">
+                            <option value="Grocery pickup">🛍️ Grocery pickup</option>
+                            <option value="Tutoring Assistance">📚 Tutoring Assistance</option>
+                            <option value="Tech Troubleshooting">💻 Tech Troubleshooting</option>
+                            <option value="General Delivery">📦 General Delivery</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Offered Wage</label>
+                        <input type="text" id="custWages" required placeholder="e.g., 100 taka" class="w-full bg-slate-950 text-slate-200 text-sm px-4 py-3 rounded-xl border border-slate-800 focus:outline-none focus:border-emerald-500 transition">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Task Description / Instructions</label>
+                    <textarea id="custDesc" rows="3" required placeholder="Details about what needs to be done..." class="w-full bg-slate-950 text-slate-200 text-sm px-4 py-3 rounded-xl border border-slate-800 focus:outline-none focus:border-emerald-500 transition"></textarea>
+                </div>
+
+                <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-emerald-600/30 transition text-sm">
+                    Publish Task to Queue 🚀
+                </button>
+            </form>
+        </div>
+
+        <!-- TRACKER SECTION -->
+        <div class="space-y-6 border-t border-slate-800 pt-8">
+            <h2 class="text-xl font-black text-white">Track Your Submitted Tasks</h2>
+            <div class="flex gap-3">
+                <input type="text" id="filterName" placeholder="Enter your customer name (e.g. ABC)" class="flex-1 bg-slate-900 text-slate-200 text-sm px-4 py-3 rounded-xl border border-slate-800 focus:outline-none focus:border-emerald-500">
+                <button onclick="loadCustomerTasks()" class="bg-slate-900 hover:bg-slate-800 text-white border border-slate-800 px-6 py-3 rounded-xl font-bold text-sm transition">Load History</button>
+            </div>
+
+            <div id="customerTaskList" class="space-y-4">
+                <p class="text-xs text-slate-500 text-center py-4">Enter your name above and click Load History to view active requests.</p>
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="relative z-10 max-w-7xl w-full mx-auto px-6 py-8 border-t border-slate-800/80 text-center text-xs text-slate-500">
+        <p>Samadhan Hub Customer Operations</p>
+    </footer>
+
+    <script>
+        document.getElementById('taskForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const tasks = JSON.parse(localStorage.getItem('samadhan_tasks') || '[]');
+            
+            const newTask = {
+                id: 'task_' + Date.now(),
+                name: document.getElementById('custName').value.trim(),
+                area: document.getElementById('custArea').value,
+                jobType: document.getElementById('custJobType').value,
+                wages: document.getElementById('custWages').value,
+                desc: document.getElementById('custDesc').value,
+                urgency: 'Medium (Within Hours)',
+                timestamp: new Date().toLocaleTimeString(),
+                status: 'Pending',
+                helper: null,
+                messages: []
+            };
+
+            tasks.unshift(newTask);
+            localStorage.setItem('samadhan_tasks', JSON.stringify(tasks));
+            alert('Task successfully published to queue!');
+            document.getElementById('taskForm').reset();
+            
+            document.getElementById('filterName').value = newTask.name;
+            loadCustomerTasks();
+        });
+
+        function loadCustomerTasks() {
+            const queryName = document.getElementById('filterName').value.trim().toLowerCase();
+            const container = document.getElementById('customerTaskList');
+            const tasks = JSON.parse(localStorage.getItem('samadhan_tasks') || '[]');
+
+            const myTasks = tasks.filter(t => t.name.toLowerCase() === queryName);
+
+            if(myTasks.length === 0) {
+                container.innerHTML = `<div class="bg-slate-900/60 p-6 rounded-2xl text-center text-slate-400 text-xs">No tasks found for this name.</div>`;
+                return;
+            }
+
+            container.innerHTML = myTasks.map(t => `
+                <div class="bg-slate-900/80 border border-slate-800/80 p-6 rounded-2xl space-y-4 shadow-xl">
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs font-bold px-2.5 py-0.5 rounded ${t.status === 'Accepted' ? 'bg-emerald-500/20 text-emerald-300' : 'bg-amber-500/20 text-amber-300'}">${t.status}</span>
+                        <span class="text-xs text-slate-400">📍 ${t.area}</span>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold text-white">${t.jobType}</h3>
+                        <p class="text-slate-300 text-sm">${t.desc}</p>
+                        <p class="text-xs text-emerald-400 mt-1">💰 Wage: ${t.wages}</p>
+                    </div>
+
+                    ${t.status === 'Accepted' && t.helper ? `
+                        <div class="p-4 bg-emerald-950/20 border border-emerald-500/30 rounded-xl space-y-1">
+                            <span class="text-xs font-bold text-emerald-400">✓ Assigned Helper</span>
+                            <p class="text-sm font-semibold text-white">${t.helper.name} (${t.helper.inst} - ${t.helper.dept})</p>
+                        </div>
+
+                        <!-- CUSTOMER LIVE CHAT -->
+                        <div class="pt-3 border-t border-slate-800 space-y-3 bg-slate-950/60 p-4 rounded-xl">
+                            <span class="text-xs font-bold text-emerald-400 uppercase tracking-wider">💬 Live Chat with Helper (${t.helper.name})</span>
+                            <div class="h-36 overflow-y-auto bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-2 text-xs">
+                                ${t.messages && t.messages.length > 0 
+                                    ? t.messages.map(m => `<div><strong class="${m.sender === t.name ? 'text-indigo-400' : 'text-emerald-400'}">${m.sender}:</strong> <span class="text-slate-200">${m.text}</span></div>`).join('')
+                                    : '<p class="text-slate-500 text-center italic mt-10">No messages yet. Say hello to your helper!</p>'
+                                }
+                            </div>
+                            <div class="flex gap-2">
+                                <input type="text" id="custMsg_${t.id}" placeholder="Type message to helper..." class="flex-1 bg-slate-950 text-slate-200 text-xs px-3 py-2.5 rounded-xl border border-slate-800 focus:outline-none focus:border-emerald-500">
+                                <button onclick="sendCustomerMessage('${t.id}')" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition">Send</button>
+                            </div>
+                        </div>
+                    ` : `
+                        <p class="text-xs text-amber-400/80 italic">⏳ Waiting for a student helper to accept this task...</p>
+                    `}
+                </div>
+            `).join('');
+        }
+
+        function sendCustomerMessage(taskId) {
+            const input = document.getElementById(`custMsg_${taskId}`);
+            const text = input.value.trim();
+            if(!text) return;
+
+            const tasks = JSON.parse(localStorage.getItem('samadhan_tasks') || '[]');
+            const task = tasks.find(t => t.id === taskId);
+
+            if(task && task.helper) {
+                if(!task.messages) task.messages = [];
+                task.messages.push({ sender: task.name, text: text, time: new Date().toLocaleTimeString() });
+                localStorage.setItem('samadhan_tasks', JSON.stringify(tasks));
+                input.value = '';
+                loadCustomerTasks();
+            }
+        }
+
+        function toggleGlobalTheme() {
+            const html = document.documentElement;
+            const isLight = html.classList.toggle('light-mode');
+            if (isLight) {
+                localStorage.setItem('samadhan_theme', 'light');
+                document.getElementById('themeIcon').innerText = '☀️';
+                document.getElementById('themeText').innerText = 'Light';
+            } else {
+                localStorage.setItem('samadhan_theme', 'dark');
+                document.getElementById('themeIcon').innerText = '🌙';
+                document.getElementById('themeText').innerText = 'Dark';
+            }
+        }
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('samadhan_theme') || 'dark';
+            if (savedTheme === 'light') {
+                document.getElementById('themeIcon').innerText = '☀️';
+                document.getElementById('themeText').innerText = 'Light';
+            }
+        });
+    </script>
+</body>
+</html>

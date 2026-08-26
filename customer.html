@@ -47,7 +47,7 @@
         
         <div class="text-center">
             <span class="bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-widest">
-                Customer Dispatch Gateway
+                Customer Dispatch Gateway (Backend Connected)
             </span>
             <h1 class="text-3xl md:text-4xl font-black text-white mt-3">Post a Task Request</h1>
             <p class="text-slate-400 text-sm mt-1">Submit your grocery pickup, delivery, or general task for regional student helpers.</p>
@@ -58,17 +58,17 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Customer Name</label>
-                        <input type="text" id="custName" required placeholder="e.g., ABC" class="w-full bg-slate-950 text-slate-200 text-sm px-4 py-3 rounded-xl border border-slate-800 focus:outline-none focus:border-emerald-500 transition">
+                        <input type="text" id="custName" required placeholder="e.g., Tanvir" class="w-full bg-slate-950 text-slate-200 text-sm px-4 py-3 rounded-xl border border-slate-800 focus:outline-none focus:border-emerald-500 transition">
                     </div>
                     <div>
                         <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Service Region</label>
                         <select id="custArea" required class="w-full bg-slate-950 text-slate-200 text-sm px-4 py-3 rounded-xl border border-slate-800 focus:outline-none focus:border-emerald-500 transition cursor-pointer">
                             <option value="" disabled selected>Select location...</option>
-                            <option value="Rajshahi - Boalia Upazila">Rajshahi - Boalia Upazila</option>
-                            <option value="Rajshahi - Motihar Upazila">Rajshahi - Motihar Upazila</option>
-                            <option value="Rajshahi - Rajpara Upazila">Rajshahi - Rajpara Upazila</option>
-                            <option value="Rajshahi - Paba Upazila">Rajshahi - Paba Upazila</option>
-                            <option value="Dhaka - Dhanmondi">Dhaka - Dhanmondi</option>
+                            <option value="Motihar / Campus">Motihar / University Campus</option>
+                            <option value="Talaimari">Talaimari</option>
+                            <option value="Bhadra">Bhadra</option>
+                            <option value="Shaheb Bazar">Shaheb Bazar</option>
+                            <option value="Laxmipur">Laxmipur</option>
                         </select>
                     </div>
                 </div>
@@ -104,7 +104,7 @@
         <div class="space-y-6 border-t border-slate-800 pt-8">
             <h2 class="text-xl font-black text-white">Track Your Submitted Tasks</h2>
             <div class="flex gap-3">
-                <input type="text" id="filterName" placeholder="Enter your customer name (e.g. ABC)" class="flex-1 bg-slate-900 text-slate-200 text-sm px-4 py-3 rounded-xl border border-slate-800 focus:outline-none focus:border-emerald-500">
+                <input type="text" id="filterName" placeholder="Enter your customer name (e.g. Tanvir)" class="flex-1 bg-slate-900 text-slate-200 text-sm px-4 py-3 rounded-xl border border-slate-800 focus:outline-none focus:border-emerald-500">
                 <button onclick="loadCustomerTasks()" class="bg-slate-900 hover:bg-slate-800 text-white border border-slate-800 px-6 py-3 rounded-xl font-bold text-sm transition">Load History</button>
             </div>
 
@@ -120,98 +120,127 @@
     </footer>
 
     <script>
-        document.getElementById('taskForm').addEventListener('submit', function(e) {
+        document.getElementById('taskForm').addEventListener('submit', async function(e) {
             e.preventDefault();
-            const tasks = JSON.parse(localStorage.getItem('samadhan_tasks') || '[]');
             
             const newTask = {
-                id: 'task_' + Date.now(),
                 name: document.getElementById('custName').value.trim(),
                 area: document.getElementById('custArea').value,
                 jobType: document.getElementById('custJobType').value,
                 wages: document.getElementById('custWages').value,
                 desc: document.getElementById('custDesc').value,
-                urgency: 'Medium (Within Hours)',
-                timestamp: new Date().toLocaleTimeString(),
-                status: 'Pending',
-                helper: null,
-                messages: []
+                urgency: 'Medium (Within Hours)'
             };
 
-            tasks.unshift(newTask);
-            localStorage.setItem('samadhan_tasks', JSON.stringify(tasks));
-            alert('Task successfully published to queue!');
-            document.getElementById('taskForm').reset();
-            
-            document.getElementById('filterName').value = newTask.name;
-            loadCustomerTasks();
+            try {
+                const response = await fetch('http://localhost:5000/api/tasks', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(newTask)
+                });
+
+                if (response.ok) {
+                    alert('Task successfully published to backend queue!');
+                    document.getElementById('taskForm').reset();
+                    document.getElementById('filterName').value = newTask.name;
+                    loadCustomerTasks();
+                } else {
+                    alert('Failed to publish task to backend.');
+                }
+            } catch (err) {
+                console.error('Connection error:', err);
+                alert('Could not connect to backend server.');
+            }
         });
 
-        function loadCustomerTasks() {
+        async function loadCustomerTasks() {
             const queryName = document.getElementById('filterName').value.trim().toLowerCase();
-            const container = document.getElementById('customerTaskList');
-            const tasks = JSON.parse(localStorage.getItem('samadhan_tasks') || '[]');
+            const container = id => document.getElementById(id);
+            const taskListContainer = container('customerTaskList');
 
-            const myTasks = tasks.filter(t => t.name.toLowerCase() === queryName);
-
-            if(myTasks.length === 0) {
-                container.innerHTML = `<div class="bg-slate-900/60 p-6 rounded-2xl text-center text-slate-400 text-xs">No tasks found for this name.</div>`;
+            if (!queryName) {
+                taskListContainer.innerHTML = `<div class="bg-slate-900/60 p-6 rounded-2xl text-center text-slate-400 text-xs">Please enter a name to search.</div>`;
                 return;
             }
 
-            container.innerHTML = myTasks.map(t => `
-                <div class="bg-slate-900/80 border border-slate-800/80 p-6 rounded-2xl space-y-4 shadow-xl">
-                    <div class="flex justify-between items-center">
-                        <span class="text-xs font-bold px-2.5 py-0.5 rounded ${t.status === 'Accepted' ? 'bg-emerald-500/20 text-emerald-300' : 'bg-amber-500/20 text-amber-300'}">${t.status}</span>
-                        <span class="text-xs text-slate-400">📍 ${t.area}</span>
-                    </div>
-                    <div>
-                        <h3 class="text-lg font-bold text-white">${t.jobType}</h3>
-                        <p class="text-slate-300 text-sm">${t.desc}</p>
-                        <p class="text-xs text-emerald-400 mt-1">💰 Wage: ${t.wages}</p>
-                    </div>
+            try {
+                const response = await fetch('http://localhost:5000/api/tasks');
+                const allTasks = await response.json();
 
-                    ${t.status === 'Accepted' && t.helper ? `
-                        <div class="p-4 bg-emerald-950/20 border border-emerald-500/30 rounded-xl space-y-1">
-                            <span class="text-xs font-bold text-emerald-400">✓ Assigned Helper</span>
-                            <p class="text-sm font-semibold text-white">${t.helper.name} (${t.helper.inst} - ${t.helper.dept})</p>
+                const myTasks = allTasks.filter(t => t.name.toLowerCase() === queryName);
+
+                if(myTasks.length === 0) {
+                    taskListContainer.innerHTML = `<div class="bg-slate-900/60 p-6 rounded-2xl text-center text-slate-400 text-xs">No tasks found for this name on the backend.</div>`;
+                    return;
+                }
+
+                taskListContainer.innerHTML = myTasks.map(t => `
+                    <div class="bg-slate-900/80 border border-slate-800/80 p-6 rounded-2xl space-y-4 shadow-xl">
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs font-bold px-2.5 py-0.5 rounded ${t.status === 'Accepted' ? 'bg-emerald-500/20 text-emerald-300' : 'bg-amber-500/20 text-amber-300'}">${t.status}</span>
+                            <span class="text-xs text-slate-400">📍 ${t.area}</span>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-white">${t.jobType}</h3>
+                            <p class="text-slate-300 text-sm">${t.desc}</p>
+                            <p class="text-xs text-emerald-400 mt-1">💰 Wage: ${t.wages}</p>
                         </div>
 
-                        <!-- CUSTOMER LIVE CHAT -->
-                        <div class="pt-3 border-t border-slate-800 space-y-3 bg-slate-950/60 p-4 rounded-xl">
-                            <span class="text-xs font-bold text-emerald-400 uppercase tracking-wider">💬 Live Chat with Helper (${t.helper.name})</span>
-                            <div class="h-36 overflow-y-auto bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-2 text-xs">
-                                ${t.messages && t.messages.length > 0 
-                                    ? t.messages.map(m => `<div><strong class="${m.sender === t.name ? 'text-indigo-400' : 'text-emerald-400'}">${m.sender}:</strong> <span class="text-slate-200">${m.text}</span></div>`).join('')
-                                    : '<p class="text-slate-500 text-center italic mt-10">No messages yet. Say hello to your helper!</p>'
-                                }
+                        ${t.status === 'Accepted' && t.helper ? `
+                            <div class="p-4 bg-emerald-950/20 border border-emerald-500/30 rounded-xl space-y-1">
+                                <span class="text-xs font-bold text-emerald-400">✓ Assigned Helper</span>
+                                <p class="text-sm font-semibold text-white">${t.helper.name} (${t.helper.inst} - ${t.helper.dept})</p>
                             </div>
-                            <div class="flex gap-2">
-                                <input type="text" id="custMsg_${t.id}" placeholder="Type message to helper..." class="flex-1 bg-slate-950 text-slate-200 text-xs px-3 py-2.5 rounded-xl border border-slate-800 focus:outline-none focus:border-emerald-500">
-                                <button onclick="sendCustomerMessage('${t.id}')" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition">Send</button>
+
+                            <!-- CUSTOMER LIVE CHAT -->
+                            <div class="pt-3 border-t border-slate-800 space-y-3 bg-slate-950/60 p-4 rounded-xl">
+                                <span class="text-xs font-bold text-emerald-400 uppercase tracking-wider">💬 Live Chat with Helper (${t.helper.name})</span>
+                                <div class="h-36 overflow-y-auto bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-2 text-xs">
+                                    ${t.messages && t.messages.length > 0 
+                                        ? t.messages.map(m => `<div><strong class="${m.sender === t.name ? 'text-indigo-400' : 'text-emerald-400'}">${m.sender}:</strong> <span class="text-slate-200">${m.text}</span></div>`).join('')
+                                        : '<p class="text-slate-500 text-center italic mt-10">No messages yet. Say hello to your helper!</p>'
+                                    }
+                                </div>
+                                <div class="flex gap-2">
+                                    <input type="text" id="custMsg_${t.id}" placeholder="Type message to helper..." class="flex-1 bg-slate-950 text-slate-200 text-xs px-3 py-2.5 rounded-xl border border-slate-800 focus:outline-none focus:border-emerald-500">
+                                    <button onclick="sendCustomerMessage('${t.id}')" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition">Send</button>
+                                </div>
                             </div>
-                        </div>
-                    ` : `
-                        <p class="text-xs text-amber-400/80 italic">⏳ Waiting for a student helper to accept this task...</p>
-                    `}
-                </div>
-            `).join('');
+                        ` : `
+                            <p class="text-xs text-amber-400/80 italic">⏳ Waiting for a student helper to accept this task...</p>
+                        `}
+                    </div>
+                `).join('');
+            } catch (err) {
+                console.error('Error loading tasks:', err);
+                taskListContainer.innerHTML = `<div class="p-4 text-center text-red-400 text-xs">Could not fetch tasks from server.</div>`;
+            }
         }
 
-        function sendCustomerMessage(taskId) {
+        async function sendCustomerMessage(taskId) {
             const input = document.getElementById(`custMsg_${taskId}`);
             const text = input.value.trim();
             if(!text) return;
 
-            const tasks = JSON.parse(localStorage.getItem('samadhan_tasks') || '[]');
-            const task = tasks.find(t => t.id === taskId);
+            // Get customer name from filter input or prompt
+            const customerName = document.getElementById('filterName').value.trim();
 
-            if(task && task.helper) {
-                if(!task.messages) task.messages = [];
-                task.messages.push({ sender: task.name, text: text, time: new Date().toLocaleTimeString() });
-                localStorage.setItem('samadhan_tasks', JSON.stringify(tasks));
-                input.value = '';
-                loadCustomerTasks();
+            try {
+                const response = await fetch(`http://localhost:5000/api/tasks/${taskId}/chat`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        sender: customerName,
+                        text: text
+                    })
+                });
+
+                if (response.ok) {
+                    input.value = '';
+                    loadCustomerTasks();
+                }
+            } catch (err) {
+                console.error('Chat error:', err);
             }
         }
 

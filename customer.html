@@ -133,7 +133,7 @@
             };
 
             try {
-                const response = await fetch('http://localhost:5000/api/tasks', {
+                const response = await fetch('/api/tasks', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(newTask)
@@ -164,7 +164,7 @@
             }
 
             try {
-                const response = await fetch('http://localhost:5000/api/tasks');
+                const response = await fetch('/api/tasks');
                 const allTasks = await response.json();
 
                 const myTasks = allTasks.filter(t => t.name.toLowerCase() === queryName);
@@ -222,11 +222,10 @@
             const text = input.value.trim();
             if(!text) return;
 
-            // Get customer name from filter input or prompt
             const customerName = document.getElementById('filterName').value.trim();
 
             try {
-                const response = await fetch(`http://localhost:5000/api/tasks/${taskId}/chat`, {
+                const response = await fetch(`/api/tasks/${taskId}/chat`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({

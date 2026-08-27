@@ -128,7 +128,7 @@
             };
 
             try {
-                await fetch('http://localhost:5000/api/helpers', {
+                await fetch('/api/helpers', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(profile)
@@ -154,7 +154,7 @@
             const container = document.getElementById('jobQueueContainer');
 
             try {
-                const response = await fetch('http://localhost:5000/api/tasks');
+                const response = await fetch('/api/tasks');
                 const allTasks = await response.json();
 
                 const matchingTasks = allTasks.filter(t => t.area === helperArea || !t.area);
@@ -227,7 +227,7 @@
             if(!helperProfile) return;
 
             try {
-                const response = await fetch(`http://localhost:5000/api/tasks/${taskId}/accept`, {
+                const response = await fetch(`/api/tasks/${taskId}/accept`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -257,7 +257,7 @@
             const helperProfile = JSON.parse(localStorage.getItem('samadhan_helper_profile'));
 
             try {
-                const response = await fetch(`http://localhost:5000/api/tasks/${taskId}/chat`, {
+                const response = await fetch(`/api/tasks/${taskId}/chat`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({

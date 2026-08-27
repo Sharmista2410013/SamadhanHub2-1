@@ -115,7 +115,7 @@
             };
 
             try {
-                const response = await fetch('http://localhost:5000/api/experts', {
+                const response = await fetch('/api/experts', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(profile)
@@ -137,7 +137,7 @@
         async function loadExperts() {
             const container = document.getElementById('expertDirectoryList');
             try {
-                const response = await fetch('http://localhost:5000/api/experts');
+                const response = await fetch('/api/experts');
                 const experts = await response.json();
 
                 if (!experts || experts.length === 0) {

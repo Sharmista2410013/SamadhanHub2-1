@@ -5,10 +5,10 @@ mongoose.connect(process.env.MONGO_URI, { autoSelectFamily: false })
   .then(() => console.log('Connected to MongoDB Atlas successfully!'))
   .catch((err) => console.error('Database connection error:', err));
 
-const Task = require('./models/Task');
-const Helper = require('./models/Helper');
-const Expert = require('./models/Expert');
-const Customer = require('./models/Customer');
+const Task = require('./Task');
+const Helper = require('./Helper');
+const Expert = require('./Expert');
+const Customer = require('./Customer');
 
 const express = require('express');
 const cors = require('cors');

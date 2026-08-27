@@ -62,7 +62,8 @@ app.post('/api/tasks', async (req, res) => {
         await newTask.save();
         res.status(201).json({ message: 'Task published successfully', task: newTask });
     } catch (err) {
-        res.status(500).json({ error: 'Failed to publish task' });
+        console.error("Task save error:", err);
+        res.status(500).json({ error: err.message }); // Sends the exact error message to help debug
     }
 });
 

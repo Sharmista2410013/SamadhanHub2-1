@@ -20,6 +20,29 @@
         html.light-mode .text-slate-300, html.light-mode .text-slate-400 { color: #475569 !important; }
         html.light-mode input, html.light-mode select { background-color: #ffffff !important; color: #0f172a !important; border-color: #cbd5e1 !important; }
     </style>
+    <script>
+        // Define switcher globally right away to avoid reference errors
+        function switchAuthMode(mode) {
+            const signupSec = document.getElementById('signupSection');
+            const loginSec = document.getElementById('loginSection');
+            const tabSignup = document.getElementById('tabSignup');
+            const tabLogin = document.getElementById('tabLogin');
+
+            if (!signupSec || !loginSec) return;
+
+            if (mode === 'signup') {
+                signupSec.classList.remove('hidden');
+                loginSec.classList.add('hidden');
+                tabSignup.className = "px-5 py-2 rounded-xl text-xs font-bold transition bg-emerald-600 text-white shadow-md";
+                tabLogin.className = "px-5 py-2 rounded-xl text-xs font-bold transition text-slate-400 hover:text-white";
+            } else {
+                signupSec.classList.add('hidden');
+                loginSec.classList.remove('hidden');
+                tabLogin.className = "px-5 py-2 rounded-xl text-xs font-bold transition bg-emerald-600 text-white shadow-md";
+                tabSignup.className = "px-5 py-2 rounded-xl text-xs font-bold transition text-slate-400 hover:text-white";
+            }
+        }
+    </script>
 </head>
 <body class="bg-slate-950 font-sans text-slate-100 antialiased min-h-screen flex flex-col justify-between selection:bg-emerald-500 selection:text-white">
 
@@ -45,14 +68,17 @@
 
     <main class="relative z-10 max-w-4xl mx-auto px-6 py-12 w-full">
         
+        <!-- AUTH CONTAINER -->
         <div id="authContainer">
+            <!-- Mode Switcher Tabs -->
             <div class="flex justify-center mb-6">
                 <div class="bg-slate-900 border border-slate-800 p-1.5 rounded-2xl flex gap-2">
-                    <button onclick="switchAuthMode('signup')" id="tabSignup" class="px-5 py-2 rounded-xl text-xs font-bold transition bg-emerald-600 text-white shadow-md">Create Account</button>
-                    <button onclick="switchAuthMode('login')" id="tabLogin" class="px-5 py-2 rounded-xl text-xs font-bold transition text-slate-400 hover:text-white">Existing Login</button>
+                    <button type="button" onclick="switchAuthMode('signup')" id="tabSignup" class="px-5 py-2 rounded-xl text-xs font-bold transition bg-emerald-600 text-white shadow-md">Create Account</button>
+                    <button type="button" onclick="switchAuthMode('login')" id="tabLogin" class="px-5 py-2 rounded-xl text-xs font-bold transition text-slate-400 hover:text-white">Existing Login</button>
                 </div>
             </div>
 
+            <!-- SIGNUP SECTION -->
             <div id="signupSection">
                 <div class="mb-8 text-center">
                     <span class="bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-widest">
@@ -71,7 +97,7 @@
                             </div>
                             <div>
                                 <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Email or Phone Number</label>
-                                <input type="text" id="helperIdentifier" required placeholder="e.g., +8801700000000 / email@ru.ac.bd" class="w-full bg-slate-950 text-slate-200 text-sm px-4 py-3 rounded-xl border border-slate-800 focus:outline-none focus:border-emerald-500 transition">
+                                <input type="text" id="helperIdentifier" required placeholder="e.g., +8801700000000" class="w-full bg-slate-950 text-slate-200 text-sm px-4 py-3 rounded-xl border border-slate-800 focus:outline-none focus:border-emerald-500 transition">
                             </div>
                         </div>
 
@@ -111,6 +137,7 @@
                 </div>
             </div>
 
+            <!-- LOGIN SECTION -->
             <div id="loginSection" class="hidden">
                 <div class="mb-8 text-center">
                     <span class="bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-widest">
@@ -140,6 +167,7 @@
             </div>
         </div>
 
+        <!-- ACTIVE DASHBOARD SECTION -->
         <div id="dashboardSection" class="hidden space-y-8">
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-800 pb-6">
                 <div>
@@ -164,35 +192,26 @@
     </footer>
 
     <script>
-        const helperData = JSON.parse(localStorage.getItem('samadhan_helper_profile'));
-        if (helperData) { showDashboard(helperData); }
-
-        function switchAuthMode(mode) {
-            const signupSec = document.getElementById('signupSection');
-            const loginSec = document.getElementById('loginSection');
-            const tabSignup = document.getElementById('tabSignup');
-            const tabLogin = document.getElementById('tabLogin');
-
-            if (mode === 'signup') {
-                signupSec.classList.remove('hidden');
-                loginSec.classList.add('hidden');
-                tabSignup.className = "px-5 py-2 rounded-xl text-xs font-bold transition bg-emerald-600 text-white shadow-md";
-                tabLogin.className = "px-5 py-2 rounded-xl text-xs font-bold transition text-slate-400 hover:text-white";
-            } else {
-                signupSec.classList.add('hidden');
-                loginSec.classList.remove('hidden');
-                tabLogin.className = "px-5 py-2 rounded-xl text-xs font-bold transition bg-emerald-600 text-white shadow-md";
-                tabSignup.className = "px-5 py-2 rounded-xl text-xs font-bold transition text-slate-400 hover:text-white";
+        document.addEventListener('DOMContentLoaded', () => {
+            const helperData = JSON.parse(localStorage.getItem('samadhan_helper_profile') || 'null');
+            if (helperData && helperData.name) { 
+                showDashboard(helperData); 
             }
-        }
+
+            const savedTheme = localStorage.getItem('samadhan_theme') || 'dark';
+            if (savedTheme === 'light') {
+                document.getElementById('themeIcon').innerText = '☀️';
+                document.getElementById('themeText').innerText = 'Light';
+            }
+        });
 
         document.getElementById('helperSignupForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             const profile = {
                 name: document.getElementById('helperName').value.trim(),
                 identifier: document.getElementById('helperIdentifier').value.trim(),
-                inst: document.getElementById('helperInst').value,
-                dept: document.getElementById('helperDept').value,
+                inst: document.getElementById('helperInst').value.trim(),
+                dept: document.getElementById('helperDept').value.trim(),
                 area: document.getElementById('helperArea').value,
                 password: document.getElementById('helperPassword').value
             };
@@ -205,11 +224,11 @@
                 });
                 const data = await res.json();
                 if(!res.ok) {
-                    alert(data.message || 'Signup failed');
+                    alert(data.message || 'Signup failed on server');
                     return;
                 }
             } catch (err) {
-                console.error('Backend sync warning:', err);
+                console.warn('Backend sync warning (offline mode supported):', err);
             }
 
             localStorage.setItem('samadhan_helper_profile', JSON.stringify(profile));
@@ -237,7 +256,7 @@
                 }
             } catch (err) {
                 console.error('Login fetch error:', err);
-                alert('Connection error during login.');
+                alert('Connection error during login. Please check server status.');
             }
         });
 
@@ -277,4 +296,122 @@
                                         <div class="flex items-center gap-2">
                                             <span class="bg-emerald-500/10 text-emerald-400 text-xs font-bold px-2.5 py-0.5 rounded uppercase">${t.jobType || 'Task'}</span>
                                             <span class="text-xs text-slate-400">📍 ${t.area}</span>
-                                            <span class="
+                                            <span class="text-xs px-2 py-0.5 rounded font-bold ${t.status === 'Accepted' ? 'bg-emerald-500/20 text-emerald-300' : 'bg-amber-500/20 text-amber-300'}">${t.status}</span>
+                                        </div>
+                                        <h3 class="font-bold text-white text-lg">Customer: ${t.name}</h3>
+                                        <p class="text-slate-300 text-sm">${t.desc}</p>
+                                        <div class="text-xs text-slate-400 pt-1">💰 Wage: <strong class="text-emerald-400">${t.wages}</strong></div>
+                                    </div>
+
+                                    <div>
+                                        ${!isAssigned ? `
+                                            <button type="button" onclick="acceptTask('${t.id}')" class="bg-emerald-600 hover:bg-emerald-500 text-white font-semibold px-6 py-3 rounded-xl transition text-sm shadow-lg shadow-emerald-600/20 whitespace-nowrap">
+                                                Accept Task ⚡
+                                            </button>
+                                        ` : isMyTask ? `
+                                            <span class="text-xs bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 px-4 py-2 rounded-xl font-bold flex items-center gap-1.5">✓ Assigned to You</span>
+                                        ` : `
+                                            <span class="text-xs bg-slate-800 text-slate-400 px-4 py-2 rounded-xl font-medium">Claimed by another helper</span>
+                                        `}
+                                    </div>
+                                </div>
+
+                                ${isMyTask ? `
+                                    <div class="mt-4 pt-4 border-t border-slate-800 space-y-3 bg-slate-950/60 p-4 rounded-xl">
+                                        <span class="text-xs font-bold text-emerald-400 uppercase tracking-wider">💬 Live Chat with Customer (${t.name})</span>
+                                        <div id="chatBox_${t.id}" class="h-36 overflow-y-auto bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-2 text-xs">
+                                            ${t.messages && t.messages.length > 0 
+                                                ? t.messages.map(m => `<div><strong class="${m.sender === helperProfile.name ? 'text-emerald-400' : 'text-indigo-400'}">${m.sender}:</strong> <span class="text-slate-200">${m.text}</span></div>`).join('')
+                                                : '<p class="text-slate-500 text-center italic mt-10">No messages yet. Say hello to the customer!</p>'
+                                            }
+                                        </div>
+                                        <div class="flex gap-2">
+                                            <input type="text" id="msgInput_${t.id}" placeholder="Type message to customer..." class="flex-1 bg-slate-950 text-slate-200 text-xs px-3 py-2.5 rounded-xl border border-slate-800 focus:outline-none focus:border-emerald-500">
+                                            <button type="button" onclick="sendHelperMessage('${t.id}')" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition">Send</button>
+                                        </div>
+                                    </div>
+                                ` : ''}
+                            </div>
+                        `;
+                    }).join('');
+                }
+            } catch (err) {
+                console.error('Error fetching tasks from backend:', err);
+                container.innerHTML = `<div class="p-6 text-center text-red-400">Could not connect to backend server to load task queue.</div>`;
+            }
+        }
+
+        async function acceptTask(taskId) {
+            const helperProfile = JSON.parse(localStorage.getItem('samadhan_helper_profile'));
+            if(!helperProfile) return;
+
+            try {
+                const response = await fetch(`/api/tasks/${taskId}/accept`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        helperData: {
+                            name: helperProfile.name,
+                            inst: helperProfile.inst,
+                            dept: helperProfile.dept
+                        }
+                    })
+                });
+
+                if (response.ok) {
+                    loadJobs(helperProfile.area);
+                } else {
+                    alert('Failed to accept task');
+                }
+            } catch (err) {
+                console.error('Connection error:', err);
+            }
+        }
+
+        async function sendHelperMessage(taskId) {
+            const input = document.getElementById(`msgInput_${taskId}`);
+            const text = input.value.trim();
+            if(!text) return;
+
+            const helperProfile = JSON.parse(localStorage.getItem('samadhan_helper_profile'));
+
+            try {
+                const response = await fetch(`/api/tasks/${taskId}/chat`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        sender: helperProfile.name,
+                        text: text
+                    })
+                });
+
+                if (response.ok) {
+                    input.value = '';
+                    loadJobs(helperProfile.area);
+                }
+            } catch (err) {
+                console.error('Chat error:', err);
+            }
+        }
+
+        function logoutHelper() {
+            localStorage.removeItem('samadhan_helper_profile');
+            location.reload();
+        }
+
+        function toggleGlobalTheme() {
+            const html = document.documentElement;
+            const isLight = html.classList.toggle('light-mode');
+            if (isLight) {
+                localStorage.setItem('samadhan_theme', 'light');
+                document.getElementById('themeIcon').innerText = '☀️';
+                document.getElementById('themeText').innerText = 'Light';
+            } else {
+                localStorage.setItem('samadhan_theme', 'dark');
+                document.getElementById('themeIcon').innerText = '🌙';
+                document.getElementById('themeText').innerText = 'Dark';
+            }
+        }
+    </script>
+</body>
+</html>

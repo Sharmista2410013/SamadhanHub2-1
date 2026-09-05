@@ -3,38 +3,197 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Customer Login - Samadhan Hub</title>
+    <title>Customer Portal - Samadhan Hub</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio"></script>
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('samadhan_theme') || 'dark';
+            if (savedTheme === 'light') { document.documentElement.classList.add('light-mode'); }
+        })();
+    </script>
+    <style>
+        html.light-mode body { background-color: #f8fafc !important; color: #0f172a !important; }
+        html.light-mode nav { background-color: rgba(255, 255, 255, 0.8) !important; border-color: #e2e8f0 !important; }
+        html.light-mode .bg-slate-900, html.light-mode .bg-slate-900\/90, html.light-mode .bg-slate-900\/80 { background-color: #ffffff !important; border-color: #e2e8f0 !important; color: #0f172a !important; }
+        html.light-mode .text-white { color: #0f172a !important; }
+        html.light-mode .text-slate-300, html.light-mode .text-slate-400 { color: #475569 !important; }
+        html.light-mode input, html.light-mode select, html.light-mode textarea { background-color: #f8fafc !important; color: #0f172a !important; border-color: #cbd5e1 !important; }
+
+        .ambient-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            z-index: 0;
+            pointer-events: none;
+        }
+        .orb-1 {
+            position: absolute;
+            top: -10%;
+            left: 20%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.15) 0%, rgba(13, 148, 136, 0.05) 60%, transparent 100%);
+            border-radius: 50%;
+            filter: blur(80px);
+        }
+    </style>
 </head>
-<body class="bg-slate-950 font-sans text-slate-100 antialiased min-h-screen flex flex-col justify-center items-center p-6">
+<body class="bg-slate-950 font-sans text-slate-100 antialiased min-h-screen flex flex-col justify-between selection:bg-emerald-500 selection:text-white relative">
 
-    <div class="max-w-md w-full bg-slate-900 border border-slate-800 p-8 rounded-3xl shadow-2xl space-y-6">
-        <div class="text-center">
-            <span class="text-xs font-bold uppercase tracking-widest text-emerald-400">Samadhan Hub</span>
-            <h1 class="text-2xl font-black text-white mt-2">Customer Login</h1>
-            <p class="text-slate-400 text-xs mt-1">Enter your registered email or phone number</p>
-        </div>
-
-        <form id="loginForm" class="space-y-4">
-            <div>
-                <label class="block text-xs font-bold uppercase text-slate-300 mb-2">Email or Phone Number</label>
-                <input type="text" id="loginEmailOrPhone" required placeholder="Enter email or phone..." class="w-full bg-slate-950 text-slate-200 text-sm px-4 py-3 rounded-xl border border-slate-800 focus:border-emerald-500 focus:outline-none">
-            </div>
-            <div>
-                <label class="block text-xs font-bold uppercase text-slate-300 mb-2">Password</label>
-                <input type="password" id="loginPassword" required placeholder="Enter password..." class="w-full bg-slate-950 text-slate-200 text-sm px-4 py-3 rounded-xl border border-slate-800 focus:border-emerald-500 focus:outline-none">
-            </div>
-            <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl transition text-sm">
-                Login to Dashboard 🔑
-            </button>
-        </form>
-
-        <div class="text-center text-xs text-slate-500">
-            <a href="index.html" class="hover:underline">← Back to Home Overview</a>
-        </div>
+    <div class="ambient-bg">
+        <div class="orb-1"></div>
     </div>
 
+    <nav class="relative z-50 max-w-7xl w-full mx-auto px-6 py-6 flex justify-between items-center border-b border-slate-800/60 backdrop-blur-md">
+        <a href="index.html" class="flex items-center gap-3 group">
+            <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-500 flex items-center justify-center text-white text-lg shadow-lg shadow-emerald-500/30">
+                🛍️
+            </div>
+            <span class="text-xl font-black tracking-tight text-white uppercase">SAMADHAN <span class="text-emerald-400">HUB</span></span>
+        </a>
+        <div class="flex items-center space-x-6 text-sm font-medium text-slate-300">
+            <a href="index.html" class="hover:text-emerald-400 transition">Overview</a>
+            <a href="customer.html" class="text-emerald-400 font-semibold">Customer Portal</a>
+            <a href="helper.html" class="hover:text-emerald-400 transition">Student Helper</a>
+            <a href="expert.html" class="hover:text-emerald-400 transition">Expert Portal</a>
+            <button onclick="toggleGlobalTheme()" id="themeToggleBtn" class="bg-slate-900 text-slate-300 border border-slate-800 px-3 py-2 rounded-xl text-xs font-semibold transition flex items-center gap-2">
+                <span id="themeIcon">🌙</span> <span id="themeText">Dark</span>
+            </button>
+        </div>
+    </nav>
+
+    <main class="relative z-10 max-w-4xl mx-auto px-6 py-12 w-full space-y-12">
+        
+        <!-- VIEW 1: LOGIN SECTION -->
+        <div id="loginView" class="max-w-md mx-auto bg-slate-900/90 border border-slate-800/80 p-8 rounded-3xl shadow-2xl backdrop-blur-md">
+            <div class="text-center mb-6">
+                <span class="bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-widest">
+                    Customer Portal
+                </span>
+                <h1 class="text-2xl font-black text-white mt-3">Account Login</h1>
+                <p class="text-slate-400 text-xs mt-1">Enter your registered email or phone number</p>
+            </div>
+            <form id="loginForm" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Email or Phone Number</label>
+                    <input type="text" id="loginEmailOrPhone" required placeholder="Enter email or phone..." class="w-full bg-slate-950 text-slate-200 text-sm px-4 py-3 rounded-xl border border-slate-800 focus:outline-none focus:border-emerald-500 transition">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Password</label>
+                    <input type="password" id="loginPassword" required placeholder="Enter password..." class="w-full bg-slate-950 text-slate-200 text-sm px-4 py-3 rounded-xl border border-slate-800 focus:outline-none focus:border-emerald-500 transition">
+                </div>
+                <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl transition text-sm shadow-lg shadow-emerald-600/20">
+                    Login to Dashboard 🔑
+                </button>
+            </form>
+        </div>
+
+        <!-- VIEW 2: DASHBOARD SECTION -->
+        <div id="dashboardView" class="hidden space-y-12">
+            <div class="flex justify-between items-center bg-slate-900/90 border border-slate-800 p-6 rounded-2xl shadow-xl">
+                <div>
+                    <span class="text-xs uppercase tracking-wider text-emerald-400 font-bold">Active Session</span>
+                    <h2 id="welcomeUser" class="text-xl font-black text-white">Welcome back!</h2>
+                </div>
+                <button onclick="logoutCustomer()" class="bg-red-500/20 hover:bg-red-500/30 text-red-300 border border-red-500/30 px-4 py-2 rounded-xl text-xs font-bold transition">
+                    Logout 🚪
+                </button>
+            </div>
+
+            <!-- Task Posting Card -->
+            <div class="bg-slate-900/90 border border-slate-800/80 p-8 rounded-3xl shadow-2xl backdrop-blur-md">
+                <h2 class="text-xl font-black text-white mb-4">Post a New Task Request</h2>
+                <form id="taskForm" class="space-y-5">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Service Region</label>
+                            <select id="custArea" required class="w-full bg-slate-950 text-slate-200 text-sm px-4 py-3 rounded-xl border border-slate-800 focus:outline-none focus:border-emerald-500 transition cursor-pointer">
+                                <option value="Motihar / Campus">Motihar / University Campus</option>
+                                <option value="Talaimari">Talaimari</option>
+                                <option value="Bhadra">Bhadra</option>
+                                <option value="Shaheb Bazar">Shaheb Bazar</option>
+                                <option value="Laxmipur">Laxmipur</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Task Type</label>
+                            <select id="custJobType" required class="w-full bg-slate-950 text-slate-200 text-sm px-4 py-3 rounded-xl border border-slate-800 focus:outline-none focus:border-emerald-500 transition cursor-pointer">
+                                <option value="Grocery pickup">🛍️ Grocery pickup</option>
+                                <option value="Tutoring Assistance">📚 Tutoring Assistance</option>
+                                <option value="Tech Troubleshooting">💻 Tech Troubleshooting</option>
+                                <option value="General Delivery">📦 General Delivery</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Offered Wage</label>
+                        <input type="text" id="custWages" required placeholder="e.g., 100 taka" class="w-full bg-slate-950 text-slate-200 text-sm px-4 py-3 rounded-xl border border-slate-800 focus:outline-none focus:border-emerald-500 transition">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Task Description / Instructions</label>
+                        <textarea id="custDesc" rows="3" required placeholder="Details about what needs to be done..." class="w-full bg-slate-950 text-slate-200 text-sm px-4 py-3 rounded-xl border border-slate-800 focus:outline-none focus:border-emerald-500 transition"></textarea>
+                    </div>
+
+                    <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-emerald-600/30 transition text-sm">
+                        Publish Task to Queue 🚀
+                    </button>
+                </form>
+            </div>
+
+            <!-- Tracker Section -->
+            <div class="space-y-6 border-t border-slate-800 pt-8">
+                <h2 class="text-xl font-black text-white">Your Submitted Tasks & Helper Updates</h2>
+                <div id="customerTaskList" class="space-y-4">
+                    <p class="text-xs text-slate-500 text-center py-4">Loading your tasks...</p>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="relative z-10 max-w-7xl w-full mx-auto px-6 py-8 border-t border-slate-800/80 text-center text-xs text-slate-500">
+        <p>Samadhan Hub Customer Operations</p>
+    </footer>
+
     <script>
+        let currentCustomer = null;
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedSession = localStorage.getItem('customer_session');
+            if (savedSession) {
+                currentCustomer = JSON.parse(savedSession);
+                showDashboard();
+            } else {
+                showLogin();
+            }
+            
+            const savedTheme = localStorage.getItem('samadhan_theme') || 'dark';
+            if (savedTheme === 'light') {
+                document.getElementById('themeIcon').innerText = '☀️';
+                document.getElementById('themeText').innerText = 'Light';
+            }
+        });
+
+        function showLogin() {
+            document.getElementById('loginView').classList.remove('hidden');
+            document.getElementById('dashboardView').classList.add('hidden');
+        }
+
+        function showDashboard() {
+            document.getElementById('loginView').classList.add('hidden');
+            document.getElementById('dashboardView').classList.remove('hidden');
+            document.getElementById('welcomeUser').innerText = `Welcome, ${currentCustomer.name}!`;
+            if (currentCustomer.area) {
+                document.getElementById('custArea').value = currentCustomer.area;
+            }
+            loadCustomerTasks();
+        }
+
         document.getElementById('loginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             const identifier = document.getElementById('loginEmailOrPhone').value.trim();
@@ -49,9 +208,9 @@
 
                 const data = await response.json();
                 if (response.ok) {
-                    // Save session data and redirect to your dashboard file
-                    localStorage.setItem('customer_session', JSON.stringify(data.customer));
-                    window.location.href = 'customer_dashboard.html';
+                    currentCustomer = data.customer;
+                    localStorage.setItem('customer_session', JSON.stringify(currentCustomer));
+                    showDashboard();
                 } else {
                     alert(data.error || 'Login failed.');
                 }
@@ -60,6 +219,99 @@
                 alert('Could not connect to backend server.');
             }
         });
+
+        function logoutCustomer() {
+            localStorage.removeItem('customer_session');
+            currentCustomer = null;
+            showLogin();
+        }
+
+        document.getElementById('taskForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const newTask = {
+                name: currentCustomer.name,
+                area: document.getElementById('custArea').value,
+                jobType: document.getElementById('custJobType').value,
+                wages: document.getElementById('custWages').value,
+                desc: document.getElementById('custDesc').value,
+                urgency: 'Medium (Within Hours)'
+            };
+
+            try {
+                const response = await fetch('/api/tasks', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(newTask)
+                });
+
+                if (response.ok) {
+                    alert('Task successfully published to backend queue!');
+                    document.getElementById('taskForm').reset();
+                    if (currentCustomer.area) document.getElementById('custArea').value = currentCustomer.area;
+                    loadCustomerTasks();
+                } else {
+                    alert('Failed to publish task.');
+                }
+            } catch (err) {
+                console.error('Connection error:', err);
+                alert('Could not connect to server.');
+            }
+        });
+
+        async function loadCustomerTasks() {
+            const container = document.getElementById('customerTaskList');
+            try {
+                const response = await fetch('/api/tasks');
+                const allTasks = await response.json();
+                const myTasks = allTasks.filter(t => t.name.toLowerCase() === currentCustomer.name.toLowerCase());
+
+                if (myTasks.length === 0) {
+                    container.innerHTML = `<div class="bg-slate-900/60 p-6 rounded-2xl text-center text-slate-400 text-xs">No tasks found. Publish your first task above!</div>`;
+                    return;
+                }
+
+                container.innerHTML = myTasks.map(t => `
+                    <div class="bg-slate-900/80 border border-slate-800/80 p-6 rounded-2xl space-y-4 shadow-xl">
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs font-bold px-2.5 py-0.5 rounded ${t.status === 'Accepted' ? 'bg-emerald-500/20 text-emerald-300' : 'bg-amber-500/20 text-amber-300'}">${t.status}</span>
+                            <span class="text-xs text-slate-400">📍 ${t.area}</span>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-white">${t.jobType}</h3>
+                            <p class="text-slate-300 text-sm">${t.desc}</p>
+                            <p class="text-xs text-emerald-400 mt-1">💰 Wage: ${t.wages}</p>
+                        </div>
+
+                        ${t.status === 'Accepted' && t.helper ? `
+                            <div class="p-4 bg-emerald-950/20 border border-emerald-500/30 rounded-xl space-y-1">
+                                <span class="text-xs font-bold text-emerald-400">✓ Assigned Helper & Email Notification Dispatched</span>
+                                <p class="text-sm font-semibold text-white">Name: ${t.helper.name} | Phone: ${t.helper.phone}</p>
+                                <p class="text-xs text-slate-300">Institution: ${t.helper.inst} (${t.helper.dept})</p>
+                            </div>
+                        ` : `
+                            <p class="text-xs text-amber-400/80 italic">⏳ Waiting for a student helper to accept this task...</p>
+                        `}
+                    </div>
+                `).join('');
+            } catch (err) {
+                console.error('Error loading tasks:', err);
+                container.innerHTML = `<div class="p-4 text-center text-red-400 text-xs">Could not fetch tasks from server.</div>`;
+            }
+        }
+
+        function toggleGlobalTheme() {
+            const html = document.documentElement;
+            const isLight = html.classList.toggle('light-mode');
+            if (isLight) {
+                localStorage.setItem('samadhan_theme', 'light');
+                document.getElementById('themeIcon').innerText = '☀️';
+                document.getElementById('themeText').innerText = 'Light';
+            } else {
+                localStorage.setItem('samadhan_theme', 'dark');
+                document.getElementById('themeIcon').innerText = '🌙';
+                document.getElementById('themeText').innerText = 'Dark';
+            }
+        }
     </script>
 </body>
 </html>

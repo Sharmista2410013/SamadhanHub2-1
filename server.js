@@ -1,5 +1,6 @@
 require('dotenv').config();
 const mongoose = require('mongoose');
+const nodemailer = require('nodemailer');
 
 mongoose.connect(process.env.MONGO_URI, { autoSelectFamily: false })
   .then(() => console.log('Connected to MongoDB Atlas successfully!'))
@@ -24,13 +25,22 @@ app.use(express.json());
 // Serve static HTML/CSS files from the current directory
 app.use(express.static(__dirname));
 
+// Nodemailer Transport Setup (Configured with environment variables)
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS
+    }
+});
+
 // ==================== ROOT ROUTE ====================
 
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// ==================== TASK ENDPOINTS (MongoDB Connected) ====================
+// ==================== TASK ENDPOINTS ====================
 
 app.get('/api/tasks', async (req, res) => {
     try {
@@ -63,7 +73,7 @@ app.post('/api/tasks', async (req, res) => {
         res.status(201).json({ message: 'Task published successfully', task: newTask });
     } catch (err) {
         console.error("Task save error:", err);
-        res.status(500).json({ error: err.message }); // Sends the exact error message to help debug
+        res.status(500).json({ error: err.message });
     }
 });
 
@@ -80,8 +90,38 @@ app.post('/api/tasks/:id/accept', async (req, res) => {
         task.status = 'Accepted';
         task.helper = helperData;
         await task.save();
-        res.json({ message: 'Task accepted successfully', task });
+
+        // Automatically find customer and send notification email
+        const customer = await Customer.findOne({ name: new RegExp('^' + task.name + '$', 'i') });
+
+        if (customer && customer.email) {
+            const mailOptions = {
+                from: 'Samadhan Hub <noreply@samadhanhub.com>',
+                to: customer.email,
+                subject: `Your Task "${task.jobType}" has been Accepted!`,
+                html: `
+                    <h2>Great News, ${customer.name}!</h2>
+                    <p>Your task request has been accepted by a Student Helper.</p>
+                    <hr/>
+                    <h3>Helper Details:</h3>
+                    <ul>
+                        <li><strong>Name:</strong> ${helperData.name}</li>
+                        <li><strong>Institution:</strong> ${helperData.inst} (${helperData.dept})</li>
+                        <li><strong>Phone Number:</strong> ${helperData.phone}</li>
+                    </ul>
+                    <p>You can now log into your Samadhan Hub dashboard to chat with your helper directly!</p>
+                `
+            };
+
+            transporter.sendMail(mailOptions, (err, info) => {
+                if (err) console.error('Email send error:', err);
+                else console.log('Acceptance email sent:', info.response);
+            });
+        }
+
+        res.json({ message: 'Task accepted successfully and email dispatched', task });
     } catch (err) {
+        console.error(err);
         res.status(500).json({ error: 'Failed to accept task' });
     }
 });
@@ -108,7 +148,7 @@ app.post('/api/tasks/:id/chat', async (req, res) => {
 });
 
 
-// ==================== HELPER PROFILE ENDPOINTS (MongoDB Connected) ====================
+// ==================== HELPER PROFILE ENDPOINTS ====================
 
 app.get('/api/helpers/:name', async (req, res) => {
     try {
@@ -151,7 +191,7 @@ app.post('/api/helpers', async (req, res) => {
 });
 
 
-// ==================== EXPERT REGISTRY ENDPOINTS (MongoDB Connected) ====================
+// ==================== EXPERT REGISTRY ENDPOINTS ====================
 
 app.get('/api/experts', async (req, res) => {
     try {
@@ -178,9 +218,8 @@ app.post('/api/experts', async (req, res) => {
 });
 
 
-// ==================== CUSTOMER ENDPOINTS (MongoDB Connected) ====================
+// ==================== CUSTOMER ENDPOINTS ====================
 
-// Customer Registration / Signup
 app.post('/api/customers/register', async (req, res) => {
     try {
         const { name, email, password, phone, area } = req.body;
@@ -207,17 +246,33 @@ app.post('/api/customers/register', async (req, res) => {
     }
 });
 
-// Customer Login
+// Customer Login (Supports Email or Phone Number lookup)
 app.post('/api/customers/login', async (req, res) => {
     try {
         const { email, password } = req.body;
+        const identifier = email ? email.toLowerCase().trim() : '';
 
-        const customer = await Customer.findOne({ email: email.toLowerCase() });
+        const customer = await Customer.findOne({
+            $or: [
+                { email: identifier },
+                { phone: identifier }
+            ]
+        });
+
         if (!customer || customer.password !== password) {
-            return res.status(401).json({ error: 'Invalid email or password' });
+            return res.status(401).json({ error: 'Invalid email/phone or password' });
         }
 
-        res.json({ message: 'Login successful', customer: { id: customer.id, name: customer.name, email: customer.email, area: customer.area } });
+        res.json({ 
+            message: 'Login successful', 
+            customer: { 
+                id: customer.id, 
+                name: customer.name, 
+                email: customer.email, 
+                phone: customer.phone,
+                area: customer.area 
+            } 
+        });
     } catch (err) {
         res.status(500).json({ error: 'Login failed' });
     }

@@ -45,52 +45,89 @@
 
     <main class="relative z-10 max-w-4xl mx-auto px-6 py-12 w-full">
         
-        <div id="signupSection">
-            <div class="mb-8 text-center">
-                <span class="bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-widest">
-                    Student Registration Gateway
-                </span>
-                <h1 class="text-3xl md:text-4xl font-black text-white mt-3">Join as Student Helper</h1>
-                <p class="text-slate-400 text-sm mt-1">Configure your profile with your preferred region to access local tasks.</p>
+        <!-- AUTH CONTAINER (Signup & Login Views) -->
+        <div id="authContainer">
+            <!-- Mode Switcher Tabs -->
+            <div class="flex justify-center mb-6">
+                <div class="bg-slate-900 border border-slate-800 p-1.5 rounded-2xl flex gap-2">
+                    <button onclick="switchAuthMode('signup')" id="tabSignup" class="px-5 py-2 rounded-xl text-xs font-bold transition bg-emerald-600 text-white shadow-md">Create Account</button>
+                    <button onclick="switchAuthMode('login')" id="tabLogin" class="px-5 py-2 rounded-xl text-xs font-bold transition text-slate-400 hover:text-white">Existing Login</button>
+                </div>
             </div>
 
-            <div class="bg-slate-900/90 border border-slate-800/80 p-8 rounded-3xl shadow-2xl backdrop-blur-md max-w-2xl mx-auto">
-                <form id="helperSignupForm" class="space-y-5">
-                    <div>
-                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Full Name</label>
-                        <input type="text" id="helperName" required placeholder="e.g., Tanvir Ahmed" class="w-full bg-slate-950 text-slate-200 text-sm px-4 py-3 rounded-xl border border-slate-800 focus:outline-none focus:border-emerald-500 transition">
-                    </div>
+            <!-- SIGNUP SECTION -->
+            <div id="signupSection">
+                <div class="mb-8 text-center">
+                    <span class="bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-widest">
+                        Student Registration Gateway
+                    </span>
+                    <h1 class="text-3xl md:text-4xl font-black text-white mt-3">Join as Student Helper</h1>
+                    <p class="text-slate-400 text-sm mt-1">Configure your profile with your preferred region to access local tasks.</p>
+                </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="bg-slate-900/90 border border-slate-800/80 p-8 rounded-3xl shadow-2xl backdrop-blur-md max-w-2xl mx-auto">
+                    <form id="helperSignupForm" class="space-y-5">
                         <div>
-                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Institution Name</label>
-                            <input type="text" id="helperInst" required placeholder="e.g., Rajshahi University" class="w-full bg-slate-950 text-slate-200 text-sm px-4 py-3 rounded-xl border border-slate-800 focus:outline-none focus:border-emerald-500 transition">
+                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Full Name</label>
+                            <input type="text" id="helperName" required placeholder="e.g., Tanvir Ahmed" class="w-full bg-slate-950 text-slate-200 text-sm px-4 py-3 rounded-xl border border-slate-800 focus:outline-none focus:border-emerald-500 transition">
                         </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Institution Name</label>
+                                <input type="text" id="helperInst" required placeholder="e.g., Rajshahi University" class="w-full bg-slate-950 text-slate-200 text-sm px-4 py-3 rounded-xl border border-slate-800 focus:outline-none focus:border-emerald-500 transition">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Department</label>
+                                <input type="text" id="helperDept" required placeholder="e.g., EEE / CSE" class="w-full bg-slate-950 text-slate-200 text-sm px-4 py-3 rounded-xl border border-slate-800 focus:outline-none focus:border-emerald-500 transition">
+                            </div>
+                        </div>
+
                         <div>
-                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Department</label>
-                            <input type="text" id="helperDept" required placeholder="e.g., EEE / CSE" class="w-full bg-slate-950 text-slate-200 text-sm px-4 py-3 rounded-xl border border-slate-800 focus:outline-none focus:border-emerald-500 transition">
+                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Preferred Region</label>
+                            <select id="helperArea" required class="w-full bg-slate-950 text-slate-200 text-sm px-4 py-3 rounded-xl border border-slate-800 focus:outline-none focus:border-emerald-500 transition cursor-pointer">
+                                <option value="" disabled selected>Select service region...</option>
+                                <option value="Motihar / Campus">Motihar / University Campus</option>
+                                <option value="Talaimari">Talaimari</option>
+                                <option value="Bhadra">Bhadra</option>
+                                <option value="Shaheb Bazar">Shaheb Bazar</option>
+                                <option value="Laxmipur">Laxmipur</option>
+                            </select>
                         </div>
-                    </div>
 
-                    <div>
-                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Preferred Region</label>
-                        <select id="helperArea" required class="w-full bg-slate-950 text-slate-200 text-sm px-4 py-3 rounded-xl border border-slate-800 focus:outline-none focus:border-emerald-500 transition cursor-pointer">
-                            <option value="" disabled selected>Select service region...</option>
-                            <option value="Motihar / Campus">Motihar / University Campus</option>
-                            <option value="Talaimari">Talaimari</option>
-                            <option value="Bhadra">Bhadra</option>
-                            <option value="Shaheb Bazar">Shaheb Bazar</option>
-                            <option value="Laxmipur">Laxmipur</option>
-                        </select>
-                    </div>
+                        <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-emerald-600/30 transition text-sm mt-4">
+                            Create Helper Account & View Live Jobs →
+                        </button>
+                    </form>
+                </div>
+            </div>
 
-                    <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-emerald-600/30 transition text-sm mt-4">
-                        Create Helper Account & View Live Jobs →
-                    </button>
-                </form>
+            <!-- LOGIN SECTION -->
+            <div id="loginSection" class="hidden">
+                <div class="mb-8 text-center">
+                    <span class="bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-widest">
+                        Helper Account Access
+                    </span>
+                    <h1 class="text-3xl md:text-4xl font-black text-white mt-3">Welcome Back, Helper</h1>
+                    <p class="text-slate-400 text-sm mt-1">Enter your registered name to access your active tasks and live chats.</p>
+                </div>
+
+                <div class="bg-slate-900/90 border border-slate-800/80 p-8 rounded-3xl shadow-2xl backdrop-blur-md max-w-md mx-auto">
+                    <form id="helperLoginForm" class="space-y-5">
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Registered Full Name</label>
+                            <input type="text" id="loginName" required placeholder="e.g., Tanvir Ahmed" class="w-full bg-slate-950 text-slate-200 text-sm px-4 py-3 rounded-xl border border-slate-800 focus:outline-none focus:border-emerald-500 transition">
+                        </div>
+
+                        <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-emerald-600/30 transition text-sm mt-2">
+                            Log In to Dashboard →
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
 
+        <!-- ACTIVE DASHBOARD SECTION -->
         <div id="dashboardSection" class="hidden space-y-8">
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-800 pb-6">
                 <div>
@@ -118,6 +155,25 @@
         const helperData = JSON.parse(localStorage.getItem('samadhan_helper_profile'));
         if (helperData) { showDashboard(helperData); }
 
+        function switchAuthMode(mode) {
+            const signupSec = document.getElementById('signupSection');
+            const loginSec = document.getElementById('loginSection');
+            const tabSignup = document.getElementById('tabSignup');
+            const tabLogin = document.getElementById('tabLogin');
+
+            if (mode === 'signup') {
+                signupSec.classList.remove('hidden');
+                loginSec.classList.add('hidden');
+                tabSignup.className = "px-5 py-2 rounded-xl text-xs font-bold transition bg-emerald-600 text-white shadow-md";
+                tabLogin.className = "px-5 py-2 rounded-xl text-xs font-bold transition text-slate-400 hover:text-white";
+            } else {
+                signupSec.classList.add('hidden');
+                loginSec.classList.remove('hidden');
+                tabLogin.className = "px-5 py-2 rounded-xl text-xs font-bold transition bg-emerald-600 text-white shadow-md";
+                tabSignup.className = "px-5 py-2 rounded-xl text-xs font-bold transition text-slate-400 hover:text-white";
+            }
+        }
+
         document.getElementById('helperSignupForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             const profile = {
@@ -141,12 +197,37 @@
             showDashboard(profile);
         });
 
+        document.getElementById('helperLoginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const loginName = document.getElementById('loginName').value.trim().toLowerCase();
+
+            try {
+                const response = await fetch('/api/helpers');
+                const helpers = await response.json();
+                const found = helpers.find(h => h.name.toLowerCase() === loginName);
+
+                if (found) {
+                    localStorage.setItem('samadhan_helper_profile', JSON.stringify(found));
+                    showDashboard(found);
+                } else {
+                    const fallbackProfile = { name: document.getElementById('loginName').value.trim(), area: 'Motihar / Campus' };
+                    localStorage.setItem('samadhan_helper_profile', JSON.stringify(fallbackProfile));
+                    showDashboard(fallbackProfile);
+                }
+            } catch (err) {
+                console.error('Login fetch error:', err);
+                const fallbackProfile = { name: document.getElementById('loginName').value.trim(), area: 'Motihar / Campus' };
+                localStorage.setItem('samadhan_helper_profile', JSON.stringify(fallbackProfile));
+                showDashboard(fallbackProfile);
+            }
+        });
+
         function showDashboard(profile) {
-            document.getElementById('signupSection').classList.add('hidden');
+            document.getElementById('authContainer').classList.add('hidden');
             document.getElementById('dashboardSection').classList.remove('hidden');
             document.getElementById('welcomeName').innerText = profile.name;
-            document.getElementById('welcomeArea').innerText = profile.area;
-            loadJobs(profile.area);
+            document.getElementById('welcomeArea').innerText = profile.area || 'Motihar / Campus';
+            loadJobs(profile.area || 'Motihar / Campus');
         }
 
         async function loadJobs(helperArea) {

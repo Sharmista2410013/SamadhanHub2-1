@@ -45,9 +45,7 @@
 
     <main class="relative z-10 max-w-4xl mx-auto px-6 py-12 w-full">
         
-        <!-- AUTH CONTAINER (Signup & Login Views) -->
         <div id="authContainer">
-            <!-- Mode Switcher Tabs -->
             <div class="flex justify-center mb-6">
                 <div class="bg-slate-900 border border-slate-800 p-1.5 rounded-2xl flex gap-2">
                     <button onclick="switchAuthMode('signup')" id="tabSignup" class="px-5 py-2 rounded-xl text-xs font-bold transition bg-emerald-600 text-white shadow-md">Create Account</button>
@@ -55,21 +53,26 @@
                 </div>
             </div>
 
-            <!-- SIGNUP SECTION -->
             <div id="signupSection">
                 <div class="mb-8 text-center">
                     <span class="bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-widest">
                         Student Registration Gateway
                     </span>
                     <h1 class="text-3xl md:text-4xl font-black text-white mt-3">Join as Student Helper</h1>
-                    <p class="text-slate-400 text-sm mt-1">Configure your profile with your preferred region to access local tasks.</p>
+                    <p class="text-slate-400 text-sm mt-1">Set up your credentials and preferred region to access local tasks.</p>
                 </div>
 
                 <div class="bg-slate-900/90 border border-slate-800/80 p-8 rounded-3xl shadow-2xl backdrop-blur-md max-w-2xl mx-auto">
                     <form id="helperSignupForm" class="space-y-5">
-                        <div>
-                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Full Name</label>
-                            <input type="text" id="helperName" required placeholder="e.g., Tanvir Ahmed" class="w-full bg-slate-950 text-slate-200 text-sm px-4 py-3 rounded-xl border border-slate-800 focus:outline-none focus:border-emerald-500 transition">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Full Name</label>
+                                <input type="text" id="helperName" required placeholder="e.g., Tanvir Ahmed" class="w-full bg-slate-950 text-slate-200 text-sm px-4 py-3 rounded-xl border border-slate-800 focus:outline-none focus:border-emerald-500 transition">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Email or Phone Number</label>
+                                <input type="text" id="helperIdentifier" required placeholder="e.g., +8801700000000 / email@ru.ac.bd" class="w-full bg-slate-950 text-slate-200 text-sm px-4 py-3 rounded-xl border border-slate-800 focus:outline-none focus:border-emerald-500 transition">
+                            </div>
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -83,16 +86,22 @@
                             </div>
                         </div>
 
-                        <div>
-                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Preferred Region</label>
-                            <select id="helperArea" required class="w-full bg-slate-950 text-slate-200 text-sm px-4 py-3 rounded-xl border border-slate-800 focus:outline-none focus:border-emerald-500 transition cursor-pointer">
-                                <option value="" disabled selected>Select service region...</option>
-                                <option value="Motihar / Campus">Motihar / University Campus</option>
-                                <option value="Talaimari">Talaimari</option>
-                                <option value="Bhadra">Bhadra</option>
-                                <option value="Shaheb Bazar">Shaheb Bazar</option>
-                                <option value="Laxmipur">Laxmipur</option>
-                            </select>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Preferred Region</label>
+                                <select id="helperArea" required class="w-full bg-slate-950 text-slate-200 text-sm px-4 py-3 rounded-xl border border-slate-800 focus:outline-none focus:border-emerald-500 transition cursor-pointer">
+                                    <option value="" disabled selected>Select service region...</option>
+                                    <option value="Motihar / Campus">Motihar / University Campus</option>
+                                    <option value="Talaimari">Talaimari</option>
+                                    <option value="Bhadra">Bhadra</option>
+                                    <option value="Shaheb Bazar">Shaheb Bazar</option>
+                                    <option value="Laxmipur">Laxmipur</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Secure Password</label>
+                                <input type="password" id="helperPassword" required placeholder="••••••••" class="w-full bg-slate-950 text-slate-200 text-sm px-4 py-3 rounded-xl border border-slate-800 focus:outline-none focus:border-emerald-500 transition">
+                            </div>
                         </div>
 
                         <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-emerald-600/30 transition text-sm mt-4">
@@ -102,21 +111,25 @@
                 </div>
             </div>
 
-            <!-- LOGIN SECTION -->
             <div id="loginSection" class="hidden">
                 <div class="mb-8 text-center">
                     <span class="bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-widest">
                         Helper Account Access
                     </span>
                     <h1 class="text-3xl md:text-4xl font-black text-white mt-3">Welcome Back, Helper</h1>
-                    <p class="text-slate-400 text-sm mt-1">Enter your registered name to access your active tasks and live chats.</p>
+                    <p class="text-slate-400 text-sm mt-1">Enter your email/phone and password to access your active tasks.</p>
                 </div>
 
                 <div class="bg-slate-900/90 border border-slate-800/80 p-8 rounded-3xl shadow-2xl backdrop-blur-md max-w-md mx-auto">
                     <form id="helperLoginForm" class="space-y-5">
                         <div>
-                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Registered Full Name</label>
-                            <input type="text" id="loginName" required placeholder="e.g., Tanvir Ahmed" class="w-full bg-slate-950 text-slate-200 text-sm px-4 py-3 rounded-xl border border-slate-800 focus:outline-none focus:border-emerald-500 transition">
+                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Email or Phone Number</label>
+                            <input type="text" id="loginIdentifier" required placeholder="e.g., +8801700000000" class="w-full bg-slate-950 text-slate-200 text-sm px-4 py-3 rounded-xl border border-slate-800 focus:outline-none focus:border-emerald-500 transition">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Password</label>
+                            <input type="password" id="loginPassword" required placeholder="••••••••" class="w-full bg-slate-950 text-slate-200 text-sm px-4 py-3 rounded-xl border border-slate-800 focus:outline-none focus:border-emerald-500 transition">
                         </div>
 
                         <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-emerald-600/30 transition text-sm mt-2">
@@ -127,7 +140,6 @@
             </div>
         </div>
 
-        <!-- ACTIVE DASHBOARD SECTION -->
         <div id="dashboardSection" class="hidden space-y-8">
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-800 pb-6">
                 <div>
@@ -178,17 +190,24 @@
             e.preventDefault();
             const profile = {
                 name: document.getElementById('helperName').value.trim(),
+                identifier: document.getElementById('helperIdentifier').value.trim(),
                 inst: document.getElementById('helperInst').value,
                 dept: document.getElementById('helperDept').value,
-                area: document.getElementById('helperArea').value
+                area: document.getElementById('helperArea').value,
+                password: document.getElementById('helperPassword').value
             };
 
             try {
-                await fetch('/api/helpers', {
+                const res = await fetch('/api/helpers/signup', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(profile)
                 });
+                const data = await res.json();
+                if(!res.ok) {
+                    alert(data.message || 'Signup failed');
+                    return;
+                }
             } catch (err) {
                 console.error('Backend sync warning:', err);
             }
@@ -199,26 +218,26 @@
 
         document.getElementById('helperLoginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
-            const loginName = document.getElementById('loginName').value.trim().toLowerCase();
+            const identifier = document.getElementById('loginIdentifier').value.trim();
+            const password = document.getElementById('loginPassword').value;
 
             try {
-                const response = await fetch('/api/helpers');
-                const helpers = await response.json();
-                const found = helpers.find(h => h.name.toLowerCase() === loginName);
+                const response = await fetch('/api/helpers/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ identifier, password })
+                });
+                const result = await response.json();
 
-                if (found) {
-                    localStorage.setItem('samadhan_helper_profile', JSON.stringify(found));
-                    showDashboard(found);
+                if (response.ok && result.helper) {
+                    localStorage.setItem('samadhan_helper_profile', JSON.stringify(result.helper));
+                    showDashboard(result.helper);
                 } else {
-                    const fallbackProfile = { name: document.getElementById('loginName').value.trim(), area: 'Motihar / Campus' };
-                    localStorage.setItem('samadhan_helper_profile', JSON.stringify(fallbackProfile));
-                    showDashboard(fallbackProfile);
+                    alert(result.message || 'Invalid credentials or helper not found.');
                 }
             } catch (err) {
                 console.error('Login fetch error:', err);
-                const fallbackProfile = { name: document.getElementById('loginName').value.trim(), area: 'Motihar / Campus' };
-                localStorage.setItem('samadhan_helper_profile', JSON.stringify(fallbackProfile));
-                showDashboard(fallbackProfile);
+                alert('Connection error during login.');
             }
         });
 
@@ -258,129 +277,4 @@
                                         <div class="flex items-center gap-2">
                                             <span class="bg-emerald-500/10 text-emerald-400 text-xs font-bold px-2.5 py-0.5 rounded uppercase">${t.jobType || 'Task'}</span>
                                             <span class="text-xs text-slate-400">📍 ${t.area}</span>
-                                            <span class="text-xs px-2 py-0.5 rounded font-bold ${t.status === 'Accepted' ? 'bg-emerald-500/20 text-emerald-300' : 'bg-amber-500/20 text-amber-300'}">${t.status}</span>
-                                        </div>
-                                        <h3 class="font-bold text-white text-lg">Customer: ${t.name}</h3>
-                                        <p class="text-slate-300 text-sm">${t.desc}</p>
-                                        <div class="text-xs text-slate-400 pt-1">💰 Wage: <strong class="text-emerald-400">${t.wages}</strong></div>
-                                    </div>
-
-                                    <div>
-                                        ${!isAssigned ? `
-                                            <button onclick="acceptTask('${t.id}')" class="bg-emerald-600 hover:bg-emerald-500 text-white font-semibold px-6 py-3 rounded-xl transition text-sm shadow-lg shadow-emerald-600/20 whitespace-nowrap">
-                                                Accept Task ⚡
-                                            </button>
-                                        ` : isMyTask ? `
-                                            <span class="text-xs bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 px-4 py-2 rounded-xl font-bold flex items-center gap-1.5">✓ Assigned to You</span>
-                                        ` : `
-                                            <span class="text-xs bg-slate-800 text-slate-400 px-4 py-2 rounded-xl font-medium">Claimed by another helper</span>
-                                        `}
-                                    </div>
-                                </div>
-
-                                ${isMyTask ? `
-                                    <div class="mt-4 pt-4 border-t border-slate-800 space-y-3 bg-slate-950/60 p-4 rounded-xl">
-                                        <span class="text-xs font-bold text-emerald-400 uppercase tracking-wider">💬 Live Chat with Customer (${t.name})</span>
-                                        <div id="chatBox_${t.id}" class="h-36 overflow-y-auto bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-2 text-xs">
-                                            ${t.messages && t.messages.length > 0 
-                                                ? t.messages.map(m => `<div><strong class="${m.sender === helperProfile.name ? 'text-emerald-400' : 'text-indigo-400'}">${m.sender}:</strong> <span class="text-slate-200">${m.text}</span></div>`).join('')
-                                                : '<p class="text-slate-500 text-center italic mt-10">No messages yet. Say hello to the customer!</p>'
-                                            }
-                                        </div>
-                                        <div class="flex gap-2">
-                                            <input type="text" id="msgInput_${t.id}" placeholder="Type message to customer..." class="flex-1 bg-slate-950 text-slate-200 text-xs px-3 py-2.5 rounded-xl border border-slate-800 focus:outline-none focus:border-emerald-500">
-                                            <button onclick="sendHelperMessage('${t.id}')" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition">Send</button>
-                                        </div>
-                                    </div>
-                                ` : ''}
-                            </div>
-                        `;
-                    }).join('');
-                }
-            } catch (err) {
-                console.error('Error fetching tasks from backend:', err);
-                container.innerHTML = `<div class="p-6 text-center text-red-400">Could not connect to backend server to load task queue.</div>`;
-            }
-        }
-
-        async function acceptTask(taskId) {
-            const helperProfile = JSON.parse(localStorage.getItem('samadhan_helper_profile'));
-            if(!helperProfile) return;
-
-            try {
-                const response = await fetch(`/api/tasks/${taskId}/accept`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        helperData: {
-                            name: helperProfile.name,
-                            inst: helperProfile.inst,
-                            dept: helperProfile.dept
-                        }
-                    })
-                });
-
-                if (response.ok) {
-                    loadJobs(helperProfile.area);
-                } else {
-                    alert('Failed to accept task');
-                }
-            } catch (err) {
-                console.error('Connection error:', err);
-            }
-        }
-
-        async function sendHelperMessage(taskId) {
-            const input = document.getElementById(`msgInput_${taskId}`);
-            const text = input.value.trim();
-            if(!text) return;
-
-            const helperProfile = JSON.parse(localStorage.getItem('samadhan_helper_profile'));
-
-            try {
-                const response = await fetch(`/api/tasks/${taskId}/chat`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        sender: helperProfile.name,
-                        text: text
-                    })
-                });
-
-                if (response.ok) {
-                    input.value = '';
-                    loadJobs(helperProfile.area);
-                }
-            } catch (err) {
-                console.error('Chat error:', err);
-            }
-        }
-
-        function logoutHelper() {
-            localStorage.removeItem('samadhan_helper_profile');
-            location.reload();
-        }
-
-        function toggleGlobalTheme() {
-            const html = document.documentElement;
-            const isLight = html.classList.toggle('light-mode');
-            if (isLight) {
-                localStorage.setItem('samadhan_theme', 'light');
-                document.getElementById('themeIcon').innerText = '☀️';
-                document.getElementById('themeText').innerText = 'Light';
-            } else {
-                localStorage.setItem('samadhan_theme', 'dark');
-                document.getElementById('themeIcon').innerText = '🌙';
-                document.getElementById('themeText').innerText = 'Dark';
-            }
-        }
-        window.addEventListener('DOMContentLoaded', () => {
-            const savedTheme = localStorage.getItem('samadhan_theme') || 'dark';
-            if (savedTheme === 'light') {
-                document.getElementById('themeIcon').innerText = '☀️';
-                document.getElementById('themeText').innerText = 'Light';
-            }
-        });
-    </script>
-</body>
-</html>
+                                            <span class="

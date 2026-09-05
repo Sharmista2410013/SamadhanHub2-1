@@ -106,7 +106,7 @@ app.post('/api/tasks/:id/accept', async (req, res) => {
                     <h3>Helper Details:</h3>
                     <ul>
                         <li><strong>Name:</strong> ${helperData.name}</li>
-                        <li><strong>Institution:</strong> ${helperData.inst} (${helperData.dept})</li>
+                        <li><strong>Institution:</strong> ${helperData.inst || 'N/A'} (${helperData.dept || 'N/A'})</li>
                         <li><strong>Phone Number:</strong> ${helperData.phone}</li>
                     </ul>
                     <p>You can now log into your Samadhan Hub dashboard to chat with your helper directly!</p>
@@ -148,7 +148,7 @@ app.post('/api/tasks/:id/chat', async (req, res) => {
 });
 
 
-// ==================== HELPER PROFILE ENDPOINTS ====================
+// ==================== HELPER PROFILE & AUTH ENDPOINTS ====================
 
 app.get('/api/helpers/:name', async (req, res) => {
     try {
@@ -187,6 +187,83 @@ app.post('/api/helpers', async (req, res) => {
         res.json({ message: 'Helper profile saved successfully', profile });
     } catch (err) {
         res.status(500).json({ error: 'Failed to save helper profile' });
+    }
+});
+
+// Helper Signup Route
+app.post('/api/helpers/signup', async (req, res) => {
+    try {
+        const { name, identifier, inst, dept, area, password } = req.body;
+        const cleanIdentifier = identifier ? identifier.toLowerCase().trim() : '';
+        const helperName = name ? name.toLowerCase().trim() : '';
+
+        const existingHelper = await Helper.findOne({
+            $or: [
+                { identifier: cleanIdentifier },
+                { phone: cleanIdentifier }
+            ]
+        });
+
+        if (existingHelper) {
+            return res.status(400).json({ message: 'A helper with this email or phone is already registered.' });
+        }
+
+        const newHelper = new Helper({
+            id: 'helper_' + Date.now(),
+            name: helperName,
+            identifier: cleanIdentifier,
+            phone: cleanIdentifier,
+            password,
+            inst,
+            dept,
+            area,
+            skills: [],
+            bio: '',
+            registeredAt: new Date().toLocaleDateString()
+        });
+
+        await newHelper.save();
+        res.status(201).json({ message: 'Helper registered successfully', helper: newHelper });
+    } catch (err) {
+        console.error('Helper signup error:', err);
+        res.status(500).json({ message: 'Failed to register helper account' });
+    }
+});
+
+// Helper Login Route
+app.post('/api/helpers/login', async (req, res) => {
+    try {
+        const { identifier, password } = req.body;
+        const cleanIdentifier = identifier ? identifier.toLowerCase().trim() : '';
+
+        const helper = await Helper.findOne({
+            $or: [
+                { identifier: cleanIdentifier },
+                { phone: cleanIdentifier }
+            ]
+        });
+
+        if (!helper || helper.password !== password) {
+            return res.status(401).json({ message: 'Invalid email/phone or password.' });
+        }
+
+        res.json({
+            message: 'Login successful',
+            helper: {
+                id: helper.id,
+                name: helper.name,
+                identifier: helper.identifier,
+                phone: helper.phone,
+                inst: helper.inst,
+                dept: helper.dept,
+                area: helper.area,
+                skills: helper.skills,
+                bio: helper.bio
+            }
+        });
+    } catch (err) {
+        console.error('Helper login error:', err);
+        res.status(500).json({ message: 'Server error during helper login' });
     }
 });
 
@@ -246,7 +323,6 @@ app.post('/api/customers/register', async (req, res) => {
     }
 });
 
-// Customer Login (Supports Email or Phone Number lookup)
 app.post('/api/customers/login', async (req, res) => {
     try {
         const { email, password } = req.body;

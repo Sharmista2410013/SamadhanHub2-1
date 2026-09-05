@@ -67,15 +67,17 @@
 
     <main class="relative z-10 max-w-4xl mx-auto px-6 py-12 w-full space-y-12">
         
-        <!-- VIEW 1: LOGIN SECTION -->
+        <!-- VIEW 1: AUTH SECTION (LOGIN & REGISTER TOGGLE) -->
         <div id="loginView" class="max-w-md mx-auto bg-slate-900/90 border border-slate-800/80 p-8 rounded-3xl shadow-2xl backdrop-blur-md">
             <div class="text-center mb-6">
                 <span class="bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-widest">
                     Customer Portal
                 </span>
-                <h1 class="text-2xl font-black text-white mt-3">Account Login</h1>
-                <p class="text-slate-400 text-xs mt-1">Enter your registered email or phone number</p>
+                <h1 id="authTitle" class="text-2xl font-black text-white mt-3">Account Login</h1>
+                <p id="authSubtitle" class="text-slate-400 text-xs mt-1">Enter your registered email or phone number</p>
             </div>
+
+            <!-- Login Form -->
             <form id="loginForm" class="space-y-4">
                 <div>
                     <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Email or Phone Number</label>
@@ -89,6 +91,42 @@
                     Login to Dashboard 🔑
                 </button>
             </form>
+
+            <!-- Registration Form (Hidden by default) -->
+            <form id="registerForm" class="space-y-4 hidden">
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Full Name</label>
+                    <input type="text" id="regName" required placeholder="Enter your name..." class="w-full bg-slate-950 text-slate-200 text-sm px-4 py-3 rounded-xl border border-slate-800 focus:outline-none focus:border-emerald-500 transition">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Email or Phone Number</label>
+                    <input type="text" id="regEmailOrPhone" required placeholder="Enter email or phone..." class="w-full bg-slate-950 text-slate-200 text-sm px-4 py-3 rounded-xl border border-slate-800 focus:outline-none focus:border-emerald-500 transition">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Password</label>
+                    <input type="password" id="regPassword" required placeholder="Create password..." class="w-full bg-slate-950 text-slate-200 text-sm px-4 py-3 rounded-xl border border-slate-800 focus:outline-none focus:border-emerald-500 transition">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Service Region</label>
+                    <select id="regArea" class="w-full bg-slate-950 text-slate-200 text-sm px-4 py-3 rounded-xl border border-slate-800 focus:outline-none focus:border-emerald-500 transition cursor-pointer">
+                        <option value="Motihar / Campus">Motihar / University Campus</option>
+                        <option value="Talaimari">Talaimari</option>
+                        <option value="Bhadra">Bhadra</option>
+                        <option value="Shaheb Bazar">Shaheb Bazar</option>
+                        <option value="Laxmipur">Laxmipur</option>
+                    </select>
+                </div>
+                <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl transition text-sm shadow-lg shadow-emerald-600/20">
+                    Create Account 🚀
+                </button>
+            </form>
+
+            <!-- Toggle Switch Between Login and Sign Up -->
+            <div class="text-center mt-6">
+                <button id="toggleAuthMode" onclick="toggleAuthView()" class="text-xs text-emerald-400 font-semibold hover:underline">
+                    Don't have an account? Sign up here
+                </button>
+            </div>
         </div>
 
         <!-- VIEW 2: DASHBOARD SECTION -->
@@ -162,6 +200,7 @@
 
     <script>
         let currentCustomer = null;
+        let isLoginMode = true;
 
         window.addEventListener('DOMContentLoaded', () => {
             const savedSession = localStorage.getItem('customer_session');
@@ -184,6 +223,29 @@
             document.getElementById('dashboardView').classList.add('hidden');
         }
 
+        function toggleAuthView() {
+            isLoginMode = !isLoginMode;
+            const loginForm = document.getElementById('loginForm');
+            const registerForm = document.getElementById('registerForm');
+            const toggleBtn = document.getElementById('toggleAuthMode');
+            const title = document.getElementById('authTitle');
+            const subtitle = document.getElementById('authSubtitle');
+
+            if (isLoginMode) {
+                loginForm.classList.remove('hidden');
+                registerForm.classList.add('hidden');
+                toggleBtn.innerText = "Don't have an account? Sign up here";
+                title.innerText = "Account Login";
+                subtitle.innerText = "Enter your registered email or phone number";
+            } else {
+                loginForm.classList.add('hidden');
+                registerForm.classList.remove('hidden');
+                toggleBtn.innerText = "Already have an account? Log in here";
+                title.innerText = "Create Account";
+                subtitle.innerText = "Register your details to start posting tasks";
+            }
+        }
+
         function showDashboard() {
             document.getElementById('loginView').classList.add('hidden');
             document.getElementById('dashboardView').classList.remove('hidden');
@@ -194,6 +256,7 @@
             loadCustomerTasks();
         }
 
+        // Login Handler
         document.getElementById('loginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             const identifier = document.getElementById('loginEmailOrPhone').value.trim();
@@ -216,6 +279,35 @@
                 }
             } catch (err) {
                 console.error('Login error:', err);
+                alert('Could not connect to backend server.');
+            }
+        });
+
+        // Registration Handler
+        document.getElementById('registerForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const name = document.getElementById('regName').value.trim();
+            const identifier = document.getElementById('regEmailOrPhone').value.trim();
+            const password = document.getElementById('regPassword').value;
+            const area = document.getElementById('regArea').value;
+
+            try {
+                const response = await fetch('/api/customers/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name: name, email: identifier, password: password, area: area })
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    alert('Account created successfully! Please log in with your credentials.');
+                    document.getElementById('registerForm').reset();
+                    toggleAuthView(); // Switch back to login mode
+                } else {
+                    alert(data.error || 'Registration failed.');
+                }
+            } catch (err) {
+                console.error('Registration error:', err);
                 alert('Could not connect to backend server.');
             }
         });

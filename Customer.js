@@ -7,7 +7,10 @@ const customerSchema = new mongoose.Schema({
     password: { type: String, required: true }, // In a production app, we would hash this, but keeping it simple for your project!
     phone: { type: String, default: '' },
     area: { type: String, default: '' },
-    registeredAt: { type: String, required: true }
+    registeredAt: { type: String, required: true },
+    // Fields for Forgot & Reset Password
+    resetPasswordCode: { type: String },
+    resetPasswordExpires: { type: Date }
 });
 
 module.exports = mongoose.model('Customer', customerSchema);

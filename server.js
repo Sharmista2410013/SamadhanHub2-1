@@ -1,6 +1,9 @@
 require('dotenv').config();
 const mongoose = require('mongoose');
-const nodemailer = require('nodemailer');
+const { Resend } = require('resend');
+
+// Initialize Resend with your API key from .env
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 mongoose.connect(process.env.MONGO_URI, { autoSelectFamily: false })
   .then(() => console.log('Connected to MongoDB Atlas successfully!'))
@@ -24,15 +27,6 @@ app.use(express.json());
 
 // Serve static HTML/CSS files from the current directory
 app.use(express.static(__dirname));
-
-// Nodemailer Transport Setup (Configured with environment variables)
-const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
-    }
-});
 
 // ==================== ROOT ROUTE ====================
 
@@ -91,13 +85,13 @@ app.post('/api/tasks/:id/accept', async (req, res) => {
         task.helper = helperData;
         await task.save();
 
-        // Automatically find customer and send notification email
+        // Automatically find customer and send notification email via Resend
         const customer = await Customer.findOne({ name: new RegExp('^' + task.name + '$', 'i') });
 
         if (customer && customer.email) {
-            const mailOptions = {
-                from: 'Samadhan Hub <noreply@samadhanhub.com>',
-                to: customer.email,
+            const { data, error } = await resend.emails.send({
+                from: 'Samadhan Hub <onboarding@resend.dev>',
+                to: [customer.email],
                 subject: `Your Task "${task.jobType}" has been Accepted!`,
                 html: `
                     <h2>Great News, ${customer.name}!</h2>
@@ -111,12 +105,13 @@ app.post('/api/tasks/:id/accept', async (req, res) => {
                     </ul>
                     <p>You can now log into your Samadhan Hub dashboard to chat with your helper directly!</p>
                 `
-            };
-
-            transporter.sendMail(mailOptions, (err, info) => {
-                if (err) console.error('Email send error:', err);
-                else console.log('Acceptance email sent:', info.response);
             });
+
+            if (error) {
+                console.error('Resend email send error:', error);
+            } else {
+                console.log('Acceptance email sent via Resend:', data);
+            }
         }
 
         res.json({ message: 'Task accepted successfully and email dispatched', task });
@@ -400,9 +395,9 @@ app.post('/api/auth/forgot-password', async (req, res) => {
         user.resetPasswordExpires = Date.now() + 15 * 60 * 1000;
         await user.save();
 
-        const mailOptions = {
-            from: 'Samadhan Hub <noreply@samadhanhub.com>',
-            to: emailToUse,
+        const { data, error } = await resend.emails.send({
+            from: 'Samadhan Hub <onboarding@resend.dev>',
+            to: [emailToUse],
             subject: 'Password Reset Code - Samadhan Hub',
             html: `
                 <h2>Password Reset Verification</h2>
@@ -411,15 +406,14 @@ app.post('/api/auth/forgot-password', async (req, res) => {
                 <h1 style="color: #059669; letter-spacing: 3px;">${resetCode}</h1>
                 <p>This code will expire in 15 minutes. If you did not request this, please ignore this email.</p>
             `
-        };
-
-        transporter.sendMail(mailOptions, (err, info) => {
-            if (err) {
-                console.error('Nodemailer send error:', err);
-                return res.status(500).json({ error: 'Failed to send reset email.' });
-            }
-            res.json({ message: 'Password reset code sent to your email successfully!' });
         });
+
+        if (error) {
+            console.error('Resend send error:', error);
+            return res.status(500).json({ error: 'Failed to send reset email.' });
+        }
+
+        res.json({ message: 'Password reset code sent to your email successfully!' });
 
     } catch (err) {
         console.error('Forgot password error:', err);

@@ -1,9 +1,15 @@
 require('dotenv').config();
 const mongoose = require('mongoose');
-const { Resend } = require('resend');
+const nodemailer = require('nodemailer');
 
-// Initialize Resend with your API key from .env
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Configure Nodemailer transporter using Gmail
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS
+    }
+});
 
 mongoose.connect(process.env.MONGO_URI, { autoSelectFamily: false })
   .then(() => console.log('Connected to MongoDB Atlas successfully!'))
@@ -85,13 +91,13 @@ app.post('/api/tasks/:id/accept', async (req, res) => {
         task.helper = helperData;
         await task.save();
 
-        // Automatically find customer and send notification email via Resend
+        // Automatically find customer and send notification email via Nodemailer
         const customer = await Customer.findOne({ name: new RegExp('^' + task.name + '$', 'i') });
 
         if (customer && customer.email) {
-            const { data, error } = await resend.emails.send({
-                from: 'Samadhan Hub <onboarding@resend.dev>',
-                to: [customer.email],
+            const mailOptions = {
+                from: `"Samadhan Hub" <${process.env.EMAIL_USER}>`,
+                to: customer.email,
                 subject: `Your Task "${task.jobType}" has been Accepted!`,
                 html: `
                     <h2>Great News, ${customer.name}!</h2>
@@ -105,12 +111,13 @@ app.post('/api/tasks/:id/accept', async (req, res) => {
                     </ul>
                     <p>You can now log into your Samadhan Hub dashboard to chat with your helper directly!</p>
                 `
-            });
+            };
 
-            if (error) {
-                console.error('Resend email send error:', error);
-            } else {
-                console.log('Acceptance email sent via Resend:', data);
+            try {
+                const info = await transporter.sendMail(mailOptions);
+                console.log('Acceptance email sent via Nodemailer:', info.response);
+            } catch (emailErr) {
+                console.error('Nodemailer email send error:', emailErr);
             }
         }
 
@@ -395,9 +402,9 @@ app.post('/api/auth/forgot-password', async (req, res) => {
         user.resetPasswordExpires = Date.now() + 15 * 60 * 1000;
         await user.save();
 
-        const { data, error } = await resend.emails.send({
-            from: 'Samadhan Hub <onboarding@resend.dev>',
-            to: [emailToUse],
+        const mailOptions = {
+            from: `"Samadhan Hub" <${process.env.EMAIL_USER}>`,
+            to: emailToUse,
             subject: 'Password Reset Code - Samadhan Hub',
             html: `
                 <h2>Password Reset Verification</h2>
@@ -406,10 +413,13 @@ app.post('/api/auth/forgot-password', async (req, res) => {
                 <h1 style="color: #059669; letter-spacing: 3px;">${resetCode}</h1>
                 <p>This code will expire in 15 minutes. If you did not request this, please ignore this email.</p>
             `
-        });
+        };
 
-        if (error) {
-            console.error('Resend send error:', error);
+        try {
+            const info = await transporter.sendMail(mailOptions);
+            console.log('Reset email sent via Nodemailer:', info.response);
+        } catch (emailErr) {
+            console.error('Nodemailer send error:', emailErr);
             return res.status(500).json({ error: 'Failed to send reset email.' });
         }
 

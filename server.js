@@ -355,6 +355,108 @@ app.post('/api/customers/login', async (req, res) => {
 });
 
 
+// ==================== FORGOT & RESET PASSWORD ENDPOINTS ====================
+
+async function findUserByIdentifier(identifier) {
+    const cleanId = identifier.toLowerCase().trim();
+    
+    let user = await Customer.findOne({ $or: [{ email: cleanId }, { phone: cleanId }] });
+    if (user) return { user, type: 'Customer' };
+
+    user = await Helper.findOne({ $or: [{ identifier: cleanId }, { phone: cleanId }] });
+    if (user) return { user, type: 'Helper' };
+
+    return null;
+}
+
+app.post('/api/auth/forgot-password', async (req, res) => {
+    try {
+        const { identifier } = req.body;
+        if (!identifier) {
+            return res.status(400).json({ error: 'Please provide your email or phone number.' });
+        }
+
+        const found = await findUserByIdentifier(identifier);
+        if (!found) {
+            return res.status(404).json({ error: 'No account found with this email or phone.' });
+        }
+
+        const { user, type } = found;
+        const emailToUse = user.email || user.identifier;
+
+        if (!emailToUse || !emailToUse.includes('@')) {
+            return res.status(400).json({ error: 'No valid email address is associated with this account identifier.' });
+        }
+
+        const resetCode = Math.floor(100000 + Math.random() * 900000).toString();
+        
+        user.resetPasswordCode = resetCode;
+        user.resetPasswordExpires = Date.now() + 15 * 60 * 1000;
+        await user.save();
+
+        const mailOptions = {
+            from: 'Samadhan Hub <noreply@samadhanhub.com>',
+            to: emailToUse,
+            subject: 'Password Reset Code - Samadhan Hub',
+            html: `
+                <h2>Password Reset Verification</h2>
+                <p>You requested a password reset for your Samadhan Hub <strong>${type}</strong> account.</p>
+                <p>Your secure verification code is:</p>
+                <h1 style="color: #059669; letter-spacing: 3px;">${resetCode}</h1>
+                <p>This code will expire in 15 minutes. If you did not request this, please ignore this email.</p>
+            `
+        };
+
+        transporter.sendMail(mailOptions, (err, info) => {
+            if (err) {
+                console.error('Nodemailer send error:', err);
+                return res.status(500).json({ error: 'Failed to send reset email.' });
+            }
+            res.json({ message: 'Password reset code sent to your email successfully!' });
+        });
+
+    } catch (err) {
+        console.error('Forgot password error:', err);
+        res.status(500).json({ error: 'Server error processing request.' });
+    }
+});
+
+app.post('/api/auth/reset-password', async (req, res) => {
+    try {
+        const { identifier, code, newPassword } = req.body;
+        if (!identifier || !code || !newPassword) {
+            return res.status(400).json({ error: 'All fields are required.' });
+        }
+
+        const found = await findUserByIdentifier(identifier);
+        if (!found) {
+            return res.status(404).json({ error: 'Account not found.' });
+        }
+
+        const { user } = found;
+
+        if (!user.resetPasswordCode || user.resetPasswordCode !== code) {
+            return res.status(400).json({ error: 'Invalid verification code.' });
+        }
+
+        if (Date.now() > user.resetPasswordExpires) {
+            return res.status(400).json({ error: 'Verification code has expired. Please request a new one.' });
+        }
+
+        user.password = newPassword;
+        user.resetPasswordCode = undefined;
+        user.resetPasswordExpires = undefined;
+        await user.save();
+
+        res.json({ message: 'Password has been reset successfully! You can now log in.' });
+
+    } catch (err) {
+        console.error('Reset password error:', err);
+        res.status(500).json({ error: 'Failed to reset password.' });
+    }
+});
+
+
 // Start Server
 app.listen(PORT, () => {
     console.log(`Samadhan Hub backend running live at http://localhost:${PORT}`);

@@ -87,6 +87,10 @@
                     <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Password</label>
                     <input type="password" id="loginPassword" required placeholder="Enter password..." class="w-full bg-slate-950 text-slate-200 text-sm px-4 py-3 rounded-xl border border-slate-800 focus:outline-none focus:border-emerald-500 transition">
                 </div>
+                <!-- Forgot Password Link -->
+                <div class="text-right">
+                    <a href="#" id="openForgotModal" class="text-xs text-emerald-400 font-semibold hover:underline">Forgot Password?</a>
+                </div>
                 <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl transition text-sm shadow-lg shadow-emerald-600/20">
                     Login to Dashboard 🔑
                 </button>
@@ -193,6 +197,31 @@
         </div>
 
     </main>
+
+    <!-- Forgot Password Modal -->
+    <div id="resetModal" style="display: none;" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex justify-center items-center p-4">
+        <div class="bg-slate-900 border border-slate-800 p-8 rounded-3xl w-full max-w-sm shadow-2xl space-y-4 text-left">
+            <h3 class="text-xl font-black text-white">Reset Password</h3>
+            
+            <!-- Step 1: Request Code -->
+            <div id="step1Container" class="space-y-3">
+                <p class="text-xs text-slate-400">Enter your registered email or phone to receive a 6-digit verification code.</p>
+                <input type="text" id="resetIdentifier" placeholder="Email or Phone" class="w-full bg-slate-950 text-slate-200 text-sm px-4 py-3 rounded-xl border border-slate-800 focus:outline-none focus:border-emerald-500 transition">
+                <button id="sendCodeBtn" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl transition text-sm shadow-lg shadow-emerald-600/20">Send Reset Code</button>
+            </div>
+
+            <!-- Step 2: Enter Code & New Password -->
+            <div id="step2Container" class="space-y-3" style="display: none;">
+                <p class="text-xs text-slate-400">Enter the 6-digit code sent to your email and choose a new password.</p>
+                <input type="text" id="resetCodeInput" placeholder="6-digit Code" class="w-full bg-slate-950 text-slate-200 text-sm px-4 py-3 rounded-xl border border-slate-800 focus:outline-none focus:border-emerald-500 transition">
+                <input type="password" id="newPasswordInput" placeholder="New Password" class="w-full bg-slate-950 text-slate-200 text-sm px-4 py-3 rounded-xl border border-slate-800 focus:outline-none focus:border-emerald-500 transition">
+                <button id="verifyResetBtn" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl transition text-sm shadow-lg shadow-emerald-600/20">Reset Password</button>
+            </div>
+
+            <button id="closeModalBtn" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold py-2.5 rounded-xl transition text-xs">Cancel</button>
+            <p id="resetMsg" class="text-xs text-center mt-2"></p>
+        </div>
+    </div>
 
     <footer class="relative z-10 max-w-7xl w-full mx-auto px-6 py-8 border-t border-slate-800/80 text-center text-xs text-slate-500">
         <p>Samadhan Hub Customer Operations</p>
@@ -302,7 +331,7 @@
                 if (response.ok) {
                     alert('Account created successfully! Please log in with your credentials.');
                     document.getElementById('registerForm').reset();
-                    toggleAuthView(); // Switch back to login mode
+                    toggleAuthView(); 
                 } else {
                     alert(data.error || 'Registration failed.');
                 }
@@ -390,6 +419,98 @@
                 container.innerHTML = `<div class="p-4 text-center text-red-400 text-xs">Could not fetch tasks from server.</div>`;
             }
         }
+
+        // Forgot Password Modal Script
+        const modal = document.getElementById('resetModal');
+        const openBtn = document.getElementById('openForgotModal');
+        const closeBtn = document.getElementById('closeModalBtn');
+        const sendCodeBtn = document.getElementById('sendCodeBtn');
+        const verifyResetBtn = document.getElementById('verifyResetBtn');
+        let savedIdentifier = '';
+
+        openBtn.onclick = (e) => { 
+            e.preventDefault(); 
+            modal.style.display = 'flex'; 
+            document.getElementById('step1Container').style.display = 'block';
+            document.getElementById('step2Container').style.display = 'none';
+            document.getElementById('resetMsg').textContent = '';
+            document.getElementById('resetIdentifier').value = '';
+        };
+        closeBtn.onclick = () => { modal.style.display = 'none'; };
+
+        sendCodeBtn.onclick = async () => {
+            savedIdentifier = document.getElementById('resetIdentifier').value.trim();
+            const msg = document.getElementById('resetMsg');
+            
+            if (!savedIdentifier) {
+                msg.style.color = '#f87171';
+                msg.textContent = 'Please enter your email or phone.';
+                return;
+            }
+
+            msg.style.color = '#94a3b8';
+            msg.textContent = 'Sending code...';
+
+            try {
+                const res = await fetch('/api/auth/forgot-password', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ identifier: savedIdentifier })
+                });
+                const data = await res.json();
+
+                if (res.ok) {
+                    msg.style.color = '#34d399';
+                    msg.textContent = data.message;
+                    document.getElementById('step1Container').style.display = 'none';
+                    document.getElementById('step2Container').style.display = 'block';
+                } else {
+                    msg.style.color = '#f87171';
+                    msg.textContent = data.error || 'Failed to send code.';
+                }
+            } catch (err) {
+                msg.style.color = '#f87171';
+                msg.textContent = 'Network error. Try again.';
+            }
+        };
+
+        verifyResetBtn.onclick = async () => {
+            const code = document.getElementById('resetCodeInput').value.trim();
+            const newPassword = document.getElementById('newPasswordInput').value.trim();
+            const msg = document.getElementById('resetMsg');
+
+            if (!code || !newPassword) {
+                msg.style.color = '#f87171';
+                msg.textContent = 'Please fill in both fields.';
+                return;
+            }
+
+            msg.style.color = '#94a3b8';
+            msg.textContent = 'Resetting password...';
+
+            try {
+                const res = await fetch('/api/auth/reset-password', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ identifier: savedIdentifier, code, newPassword })
+                });
+                const data = await res.json();
+
+                if (res.ok) {
+                    msg.style.color = '#34d399';
+                    msg.textContent = data.message;
+                    setTimeout(() => {
+                        modal.style.display = 'none';
+                    }, 2000);
+                } else {
+                    msg.style.color = '#f87171';
+                    msg.textContent = data.error || 'Failed to reset.';
+                }
+            } catch (err) {
+                msg.style.color = '#f87171';
+                msg.textContent = 'Network error. Try again.';
+            }
+        };
 
         function toggleGlobalTheme() {
             const html = document.documentElement;

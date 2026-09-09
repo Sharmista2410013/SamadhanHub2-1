@@ -360,11 +360,17 @@ app.post('/api/customers/login', async (req, res) => {
 async function findUserByIdentifier(identifier) {
     const cleanId = identifier.toLowerCase().trim();
     
+    // 1. Check Customer collection
     let user = await Customer.findOne({ $or: [{ email: cleanId }, { phone: cleanId }] });
     if (user) return { user, type: 'Customer' };
 
+    // 2. Check Helper collection
     user = await Helper.findOne({ $or: [{ identifier: cleanId }, { phone: cleanId }] });
     if (user) return { user, type: 'Helper' };
+
+    // 3. Check Expert collection
+    user = await Expert.findOne({ identifier: cleanId });
+    if (user) return { user, type: 'Expert' };
 
     return null;
 }

@@ -392,7 +392,7 @@
                 }
 
                 container.innerHTML = myTasks.map(t => `
-                    <div class="bg-slate-900/80 border border-slate-800/80 p-6 rounded-2xl space-y-4 shadow-xl">
+                    <div class="bg-slate-900/80 border border-slate-800/80 p-6 rounded-2xl space-y-4 shadow-xl" id="task-card-${t.id}">
                         <div class="flex justify-between items-center">
                             <span class="text-xs font-bold px-2.5 py-0.5 rounded ${t.status === 'Accepted' ? 'bg-emerald-500/20 text-emerald-300' : 'bg-amber-500/20 text-amber-300'}">${t.status}</span>
                             <span class="text-xs text-slate-400">📍 ${t.area}</span>
@@ -407,13 +407,25 @@
                             <div class="p-4 bg-emerald-950/20 border border-emerald-500/30 rounded-xl space-y-3">
                                 <div>
                                     <span class="text-xs font-bold text-emerald-400">✓ Assigned Helper & Email Notification Dispatched</span>
-                                    <p class="text-sm font-semibold text-white">Name: ${t.helper.name || 'Helper'} | Phone: ${t.helper.phone || 'N/A'}</p>
+                                    <p class="text-sm font-semibold text-white">Name: ${t.helper.name || 'Helper'} | Phone: ${t.helper.phone || t.helper.identifier || 'N/A'}</p>
                                     <p class="text-xs text-slate-300">Institution: ${t.helper.inst || ''} (${t.helper.dept || ''})</p>
                                 </div>
-                                <div>
-                                    <a href="/chat.html?taskId=${t._id}" class="inline-block bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-4 py-2 rounded-xl transition shadow-md">
-                                        💬 Open Live Chat
-                                    </a>
+                                
+                                <!-- INLINE AUTOMATIC LIVE CHAT BOX -->
+                                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
+                                    <h4 class="text-xs font-bold uppercase tracking-wider text-emerald-400">Live Chat with Helper</h4>
+                                    <div id="messages_${t.id}" class="h-36 overflow-y-auto space-y-2 pr-2 text-xs bg-slate-900 p-3 rounded-lg border border-slate-800">
+                                        ${(t.messages && t.messages.length > 0) ? t.messages.map(m => `
+                                            <div class="flex flex-col">
+                                                <span class="font-bold text-emerald-400">${m.sender} <span class="text-[10px] text-slate-500 font-normal">(${m.time})</span></span>
+                                                <span class="text-slate-200">${m.text}</span>
+                                            </div>
+                                        `).join('') : '<p class="text-slate-500 italic text-center">No messages yet. Say hello!</p>'}
+                                    </div>
+                                    <div class="flex gap-2">
+                                        <input type="text" id="input_${t.id}" placeholder="Type a message..." class="flex-1 bg-slate-900 text-slate-200 text-xs px-3 py-2 rounded-lg border border-slate-800 focus:outline-none focus:border-emerald-500">
+                                        <button onclick="sendChatMessage('${t.id}')" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-4 py-2 rounded-lg text-xs transition">Send</button>
+                                    </div>
                                 </div>
                             </div>
                         ` : `
@@ -424,6 +436,34 @@
             } catch (err) {
                 console.error('Error loading tasks:', err);
                 container.innerHTML = `<div class="p-4 text-center text-red-400 text-xs">Could not fetch tasks from server.</div>`;
+            }
+        }
+
+        // Inline Chat Sender Function
+        async function sendChatMessage(taskId) {
+            const inputField = document.getElementById(`input_${taskId}`);
+            const text = inputField.value.trim();
+            if (!text) return;
+
+            const sender = currentCustomer.name;
+
+            try {
+                const response = await fetch(`/api/tasks/${taskId}/chat`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ sender, text })
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    inputField.value = '';
+                    // Reload customer tasks to update chat feed instantly
+                    loadCustomerTasks();
+                } else {
+                    alert('Failed to send message.');
+                }
+            } catch (err) {
+                console.error('Chat error:', err);
             }
         }
 

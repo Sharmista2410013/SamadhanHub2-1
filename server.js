@@ -27,6 +27,18 @@ app.use(express.json());
 // Serve static HTML/CSS files from the current directory
 app.use(express.static(__dirname));
 
+// Helper function to robustly find a task by either MongoDB _id or custom id field
+async function findTaskById(taskId) {
+    let task = null;
+    if (mongoose.Types.ObjectId.isValid(taskId)) {
+        task = await Task.findById(taskId);
+    }
+    if (!task) {
+        task = await Task.findOne({ id: taskId });
+    }
+    return task;
+}
+
 // ==================== ROOT ROUTE ====================
 
 app.get('/', (req, res) => {
@@ -73,9 +85,9 @@ app.post('/api/tasks', async (req, res) => {
 app.post('/api/tasks/:id/accept', async (req, res) => {
     try {
         const { id } = req.params;
-        const { helperData } = req.body;
+        const helperData = req.body.helper || req.body.helperData;
 
-        const task = await Task.findOne({ id });
+        const task = await findTaskById(id);
         if (!task) {
             return res.status(404).json({ error: 'Task not found' });
         }
@@ -121,26 +133,35 @@ app.post('/api/tasks/:id/accept', async (req, res) => {
     }
 });
 
-app.post('/api/tasks/:id/chat', async (req, res) => {
+// Unified handler for saving chat messages (supporting both /messages and /chat routes)
+async function handleTaskMessage(req, res) {
     try {
         const { id } = req.params;
-        const { sender, text } = req.body;
+        const { sender, text, time } = req.body;
 
-        const task = await Task.findOne({ id });
+        const task = await findTaskById(id);
         if (!task) {
             return res.status(404).json({ error: 'Task not found' });
         }
 
         if (!task.messages) task.messages = [];
-        const newMessage = { sender, text, time: new Date().toLocaleTimeString() };
+        const newMessage = { 
+            sender: sender || 'User', 
+            text, 
+            time: time || new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) 
+        };
         task.messages.push(newMessage);
         await task.save();
 
-        res.json({ message: 'Message sent', messages: task.messages });
+        res.json({ message: 'Message sent successfully', messages: task.messages });
     } catch (err) {
+        console.error('Message save error:', err);
         res.status(500).json({ error: 'Failed to send message' });
     }
-});
+}
+
+app.post('/api/tasks/:id/messages', handleTaskMessage);
+app.post('/api/tasks/:id/chat', handleTaskMessage);
 
 
 // ==================== HELPER PROFILE & AUTH ENDPOINTS ====================

@@ -44,12 +44,12 @@
     </nav>
 
     <!-- Main Section -->
-    <main class="relative z-10 max-w-xl mx-auto px-6 py-12 w-full flex-1 flex flex-col justify-center">
+    <main class="relative z-10 max-w-3xl mx-auto px-6 py-12 w-full flex-1 flex flex-col justify-center">
         
         <!-- Auth Container (Signup / Login Cards) -->
-        <div id="authContainer">
+        <div id="authContainer" class="max-w-xl mx-auto w-full">
             
-            <!-- Signup Card (Exact match to your screenshot design) -->
+            <!-- Signup Card -->
             <div id="signupSection">
                 <div class="bg-slate-900/90 border border-slate-800/80 p-8 rounded-3xl shadow-2xl backdrop-blur-md text-center">
                     
@@ -156,46 +156,10 @@
                 </button>
             </div>
 
-            <div id="jobQueueContainer" class="space-y-4"></div>
+            <div id="jobQueueContainer" class="space-y-6"></div>
         </div>
 
     </main>
-
-    <!-- Floating Chat Toggle Button -->
-    <div class="fixed bottom-6 right-6 z-50">
-        <button id="chatToggleBtn" onclick="toggleChat()" class="bg-emerald-600 hover:bg-emerald-500 text-white p-4 rounded-full shadow-lg shadow-emerald-600/30 flex items-center justify-center transition transform hover:scale-105">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-            </svg>
-        </button>
-    </div>
-
-    <!-- Customer Chat Box Container -->
-    <div id="chatWindow" class="hidden fixed bottom-24 right-6 w-96 h-[500px] bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl z-50 flex flex-col overflow-hidden backdrop-blur-md">
-        <div class="bg-emerald-600 text-white px-4 py-3 flex justify-between items-center">
-            <div class="flex items-center space-x-2">
-                <div class="w-3 h-3 bg-white rounded-full"></div>
-                <h3 class="font-semibold text-sm">Customer Support Chat</h3>
-            </div>
-            <button onclick="toggleChat()" class="text-emerald-200 hover:text-white text-lg font-bold">&times;</button>
-        </div>
-
-        <div id="chatMessages" class="flex-1 p-4 overflow-y-auto space-y-3 bg-slate-950">
-            <div class="flex justify-start">
-                <div class="bg-slate-900 text-slate-200 p-3 rounded-xl shadow-sm max-w-[80%] text-sm border border-slate-800">
-                    Hello! I need assistance with my order request. Are you available?
-                </div>
-            </div>
-        </div>
-
-        <form id="chatForm" onsubmit="sendMessage(event)" class="p-3 bg-slate-900 border-t border-slate-800 flex items-center space-x-2">
-            <input type="text" id="chatInput" placeholder="Type your message..." autocomplete="off" required
-                class="flex-1 bg-slate-950 text-slate-200 border border-slate-800 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-emerald-500">
-            <button type="submit" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-xl text-sm font-medium transition">
-                Send
-            </button>
-        </form>
-    </div>
 
     <!-- Footer -->
     <footer class="relative z-10 max-w-7xl w-full mx-auto px-6 py-8 border-t border-slate-800/80 text-center text-xs text-slate-500">
@@ -299,30 +263,59 @@
                         </div>`;
                 } else {
                     container.innerHTML = matchingTasks.map((t) => {
-                        const isAssigned = t.status === 'Accepted';
-                        const isMyTask = isAssigned && t.helper && helperProfile.name && t.helper.name.toLowerCase() === helperProfile.name.toLowerCase();
+                        const statusLower = (t.status || '').toLowerCase();
+                        const isAccepted = statusLower === 'accepted';
+                        const isMyTask = isAccepted && t.helper && helperProfile.name && t.helper.name.toLowerCase() === helperProfile.name.toLowerCase();
 
                         return `
-                            <div class="bg-slate-900/80 border border-slate-800/80 p-6 rounded-2xl space-y-4 shadow-xl">
+                            <div class="bg-slate-900/90 border border-slate-800/80 p-6 rounded-3xl space-y-5 shadow-2xl">
                                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                                     <div class="space-y-1">
                                         <div class="flex items-center gap-2">
                                             <span class="bg-emerald-500/10 text-emerald-400 text-xs font-bold px-2.5 py-0.5 rounded uppercase">${t.jobType || 'Task'}</span>
                                             <span class="text-xs text-slate-400">📍 ${t.area}</span>
-                                            <span class="text-xs text-slate-500">🕒 ${t.createdAt ? new Date(t.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : 'Just now'}</span>
                                         </div>
-                                        <h3 class="text-lg font-bold text-white">${t.title || 'Untitled Task'}</h3>
+                                        <h3 class="text-xl font-bold text-white">${t.title || 'Untitled Task'}</h3>
                                         <p class="text-sm text-slate-300">${t.description || ''}</p>
                                     </div>
                                     <div class="text-right">
                                         <div class="text-emerald-400 font-extrabold text-lg">${t.budget || 'BDT 0'}</div>
-                                        <div class="text-xs text-slate-400">Status: <span class="text-white font-semibold">${t.status || 'Pending'}</span></div>
+                                        <div class="text-xs text-slate-400 mt-1">Status: <span class="text-white font-semibold">${t.status || 'Pending'}</span></div>
                                     </div>
                                 </div>
-                                <div class="flex justify-end gap-2 pt-2 border-t border-slate-800/60">
-                                    ${!isAssigned ? `<button onclick="acceptTask('${t._id}')" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-xl text-xs font-bold transition">Accept Job</button>` : ''}
-                                    ${isMyTask ? `<span class="bg-emerald-500/20 text-emerald-300 px-3 py-1.5 rounded-xl text-xs font-semibold">Assigned to You</span>` : ''}
+
+                                <div class="flex items-center justify-between pt-3 border-t border-slate-800/80">
+                                    <div class="text-xs text-slate-400">
+                                        ${isAccepted ? `<span class="text-emerald-400 font-bold">✓ Assigned Helper:</span> ${t.helper ? (t.helper.name || t.helper) : 'Assigned'}` : 'Waiting for helper acceptance'}
+                                    </div>
+                                    <div>
+                                        ${!isAccepted ? `<button onclick="acceptTask('${t._id}')" class="bg-emerald-600 hover:bg-emerald-500 text-white px-5 py-2.5 rounded-xl text-xs font-bold transition shadow-lg shadow-emerald-600/20">Accept Job</button>` : ''}
+                                        ${isMyTask || isAccepted ? `<span class="bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-3 py-1.5 rounded-xl text-xs font-semibold">Assigned to You</span>` : ''}
+                                    </div>
                                 </div>
+
+                                <!-- Embedded Live Chat Box (Matches Customer Portal Style) -->
+                                ${isAccepted ? `
+                                    <div class="bg-slate-950 border border-slate-800 rounded-2xl p-5 space-y-4">
+                                        <div class="text-xs font-black text-emerald-400 uppercase tracking-widest">LIVE CHAT WITH CUSTOMER</div>
+                                        
+                                        <div id="chat-messages-${t._id}" class="bg-slate-900/60 border border-slate-800/80 rounded-xl p-4 h-44 overflow-y-auto space-y-3">
+                                            <div class="text-xs">
+                                                <span class="font-bold text-emerald-400">${t.customerName || 'Customer'}</span> 
+                                                <span class="text-slate-500 text-[10px]">(${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})})</span>
+                                                <p class="text-slate-200 mt-0.5">Hello! Please let me know when you can start on this task.</p>
+                                            </div>
+                                        </div>
+
+                                        <form onsubmit="sendTaskMessage(event, '${t._id}')" class="flex gap-2">
+                                            <input type="text" id="chat-input-${t._id}" placeholder="Type a message..." required
+                                                class="flex-1 bg-slate-900 text-slate-200 text-xs px-4 py-3 rounded-xl border border-slate-800 focus:outline-none focus:border-emerald-500 transition">
+                                            <button type="submit" class="bg-emerald-600 hover:bg-emerald-500 text-white px-5 py-3 rounded-xl text-xs font-bold transition shadow-md shadow-emerald-600/20">
+                                                Send
+                                            </button>
+                                        </form>
+                                    </div>
+                                ` : ''}
                             </div>
                         `;
                     }).join('');
@@ -351,6 +344,30 @@
             }
         }
 
+        function sendTaskMessage(event, taskId) {
+            event.preventDefault();
+            const input = document.getElementById(`chat-input-${taskId}`);
+            const messagesContainer = document.getElementById(`chat-messages-${taskId}`);
+            const messageText = input.value.trim();
+            const helperProfile = JSON.parse(localStorage.getItem('samadhan_helper_profile') || '{}');
+
+            if (!messageText) return;
+
+            const timeStr = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'text-xs';
+            messageDiv.innerHTML = `
+                <span class="font-bold text-emerald-400">${helperProfile.name || 'You'}</span> 
+                <span class="text-slate-500 text-[10px]">(${timeStr})</span>
+                <p class="text-slate-200 mt-0.5">${escapeHtml(messageText)}</p>
+            `;
+            messagesContainer.appendChild(messageDiv);
+
+            input.value = '';
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
         function logoutHelper() {
             localStorage.removeItem('samadhan_helper_profile');
             location.reload();
@@ -368,58 +385,6 @@
                 document.getElementById('themeIcon').innerText = '🌙';
                 document.getElementById('themeText').innerText = 'Dark';
             }
-        }
-
-        // Chat Box Toggle and Messaging Logic
-        function toggleChat() {
-            const chatWindow = document.getElementById('chatWindow');
-            const chatInput = document.getElementById('chatInput');
-            
-            if (chatWindow.classList.contains('hidden')) {
-                chatWindow.classList.remove('hidden');
-                scrollToBottom();
-                chatInput.focus();
-            } else {
-                chatWindow.classList.add('hidden');
-            }
-        }
-
-        function sendMessage(event) {
-            event.preventDefault();
-            const input = document.getElementById('chatInput');
-            const messagesContainer = document.getElementById('chatMessages');
-            const messageText = input.value.trim();
-
-            if (!messageText) return;
-
-            const messageDiv = document.createElement('div');
-            messageDiv.className = 'flex justify-end';
-            messageDiv.innerHTML = `
-                <div class="bg-emerald-600 text-white p-3 rounded-xl shadow-sm max-w-[80%] text-sm">
-                    ${escapeHtml(messageText)}
-                </div>
-            `;
-            messagesContainer.appendChild(messageDiv);
-
-            input.value = '';
-            scrollToBottom();
-
-            setTimeout(() => {
-                const replyDiv = document.createElement('div');
-                replyDiv.className = 'flex justify-start';
-                replyDiv.innerHTML = `
-                    <div class="bg-slate-900 text-slate-200 p-3 rounded-xl shadow-sm max-w-[80%] text-sm border border-slate-800">
-                        Thanks for your response! I'll check on that.
-                    </div>
-                `;
-                messagesContainer.appendChild(replyDiv);
-                scrollToBottom();
-            }, 1000);
-        }
-
-        function scrollToBottom() {
-            const messagesContainer = document.getElementById('chatMessages');
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
         }
 
         function escapeHtml(text) {

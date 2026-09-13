@@ -141,7 +141,7 @@
 
         </div>
 
-        <!-- Dashboard Section (Shown after successful login/signup) -->
+        <!-- Dashboard Section -->
         <div id="dashboardSection" class="hidden space-y-6">
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-800 pb-6">
                 <div>
@@ -268,12 +268,10 @@
                         const isMyTask = isAccepted && t.helper && helperProfile.name && t.helper.name.toLowerCase() === helperProfile.name.toLowerCase();
                         const customerName = t.customerName || t.studentName || 'Customer';
 
-                        // Robust fallbacks for Title and Wage across different database schemas
                         const taskTitle = t.title || t.name || t.taskTitle || 'Untitled Task';
                         const taskDescription = t.description || t.details || '';
                         const taskBudget = t.budget || (t.wage ? `BDT ${t.wage}` : (t.price ? `BDT ${t.price}` : 'BDT 0'));
 
-                        // Render actual messages dynamically without hardcoded fallback text
                         const messagesHtml = (t.messages && t.messages.length > 0)
                             ? t.messages.map(m => `
                                 <div class="text-xs">
@@ -360,40 +358,29 @@
         async function sendTaskMessage(event, taskId) {
             event.preventDefault();
             const input = document.getElementById(`chat-input-${taskId}`);
-            const messagesContainer = document.getElementById(`chat-messages-${taskId}`);
             const messageText = input.value.trim();
             const helperProfile = JSON.parse(localStorage.getItem('samadhan_helper_profile') || '{}');
 
             if (!messageText) return;
 
             const timeStr = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-            
-            // Remove empty placeholder state if present
-            const italicEl = messagesContainer.querySelector('p.italic');
-            if (italicEl) {
-                messagesContainer.innerHTML = '';
-            }
-
-            const messageDiv = document.createElement('div');
-            messageDiv.className = 'text-xs';
-            messageDiv.innerHTML = `
-                <span class="font-bold text-emerald-400">${escapeHtml(helperProfile.name || 'You')}</span> 
-                <span class="text-slate-500 text-[10px]">(${timeStr})</span>
-                <p class="text-slate-200 mt-0.5">${escapeHtml(messageText)}</p>
-            `;
-            messagesContainer.appendChild(messageDiv);
-
-            input.value = '';
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
 
             try {
-                await fetch(`/api/tasks/${taskId}/messages`, {
+                const response = await fetch(`/api/tasks/${taskId}/messages`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ sender: helperProfile.name, text: messageText, time: timeStr })
                 });
+
+                if (response.ok) {
+                    input.value = '';
+                    loadJobs(helperProfile.area || 'Motihar / University Campus');
+                } else {
+                    alert('Failed to send message to server.');
+                }
             } catch (e) {
                 console.error('Message sync error:', e);
+                alert('Connection error while sending message.');
             }
         }
 

@@ -88,6 +88,7 @@ app.post('/api/tasks/:id/accept', async (req, res) => {
         const customer = await Customer.findOne({ name: new RegExp('^' + task.name + '$', 'i') });
 
         if (customer && customer.email) {
+            const helperPhone = helperData.phone || helperData.identifier || 'N/A';
             const { data, error } = await resend.emails.send({
                 from: 'Samadhan Hub <onboarding@resend.dev>',
                 to: [customer.email],
@@ -100,7 +101,7 @@ app.post('/api/tasks/:id/accept', async (req, res) => {
                     <ul>
                         <li><strong>Name:</strong> ${helperData.name}</li>
                         <li><strong>Institution:</strong> ${helperData.inst || 'N/A'} (${helperData.dept || 'N/A'})</li>
-                        <li><strong>Phone Number:</strong> ${helperData.phone}</li>
+                        <li><strong>Phone Number/Contact:</strong> ${helperPhone}</li>
                     </ul>
                     <p>You can now log into your Samadhan Hub dashboard to chat with your helper directly!</p>
                 `
@@ -363,7 +364,7 @@ async function findUserByIdentifier(identifier) {
     if (user) return { user, type: 'Helper' };
 
     // 3. Check Expert collection
-    user = await Expert.findOne({ identifier: cleanId });
+    user = await Expert.findOne({ $or: [{ identifier: cleanId }, { email: cleanId }, { phone: cleanId }] });
     if (user) return { user, type: 'Expert' };
 
     return null;

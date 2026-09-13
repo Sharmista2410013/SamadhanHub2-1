@@ -49,19 +49,17 @@
         <!-- Auth Container (Signup / Login Cards) -->
         <div id="authContainer">
             
-            <!-- Signup Card (Matching your screenshot design) -->
+            <!-- Signup Card (Exact match to your screenshot design) -->
             <div id="signupSection">
-                <div class="bg-slate-900/90 border border-slate-800/80 p-8 rounded-3xl shadow-2xl backdrop-blur-md">
+                <div class="bg-slate-900/90 border border-slate-800/80 p-8 rounded-3xl shadow-2xl backdrop-blur-md text-center">
                     
-                    <div class="text-center mb-8">
-                        <div class="inline-block bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs font-bold px-4 py-1.5 rounded-full uppercase tracking-widest mb-3">
-                            Student Helper Portal
-                        </div>
-                        <h1 class="text-3xl font-black text-white tracking-tight">Create Account</h1>
-                        <p class="text-slate-400 text-sm mt-1">Register your details to start accepting tasks</p>
+                    <div class="inline-block bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs font-bold px-4 py-1.5 rounded-full uppercase tracking-widest mb-4">
+                        Student Helper Portal
                     </div>
+                    <h1 class="text-3xl font-black text-white tracking-tight">Create Account</h1>
+                    <p class="text-slate-400 text-sm mt-1 mb-8">Register your details to start accepting tasks</p>
 
-                    <form id="helperSignupForm" class="space-y-5">
+                    <form id="helperSignupForm" class="space-y-5 text-left">
                         <div>
                             <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Full Name</label>
                             <input type="text" id="helperName" required placeholder="Enter your name..." 
@@ -92,12 +90,12 @@
                             </select>
                         </div>
 
-                        <button type="submit" class="w-full bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 text-white font-bold py-4 rounded-xl shadow-lg shadow-emerald-600/30 transition text-sm mt-2 flex items-center justify-center gap-2">
+                        <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-4 rounded-xl shadow-lg shadow-emerald-600/30 transition text-sm mt-2 flex items-center justify-center gap-2">
                             Create Account 🚀
                         </button>
                     </form>
 
-                    <div class="text-center mt-6">
+                    <div class="mt-6">
                         <button onclick="switchAuthMode('login')" class="text-emerald-400 hover:text-emerald-300 text-xs font-semibold transition">
                             Already have an account? Log in here
                         </button>
@@ -107,17 +105,15 @@
 
             <!-- Login Card -->
             <div id="loginSection" class="hidden">
-                <div class="bg-slate-900/90 border border-slate-800/80 p-8 rounded-3xl shadow-2xl backdrop-blur-md">
+                <div class="bg-slate-900/90 border border-slate-800/80 p-8 rounded-3xl shadow-2xl backdrop-blur-md text-center">
                     
-                    <div class="text-center mb-8">
-                        <div class="inline-block bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs font-bold px-4 py-1.5 rounded-full uppercase tracking-widest mb-3">
-                            Helper Account Access
-                        </div>
-                        <h1 class="text-3xl font-black text-white tracking-tight">Welcome Back</h1>
-                        <p class="text-slate-400 text-sm mt-1">Log in to manage your active tasks</p>
+                    <div class="inline-block bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs font-bold px-4 py-1.5 rounded-full uppercase tracking-widest mb-4">
+                        Helper Account Access
                     </div>
+                    <h1 class="text-3xl font-black text-white tracking-tight">Welcome Back</h1>
+                    <p class="text-slate-400 text-sm mt-1 mb-8">Log in to manage your active tasks</p>
 
-                    <form id="helperLoginForm" class="space-y-5">
+                    <form id="helperLoginForm" class="space-y-5 text-left">
                         <div>
                             <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Email or Phone Number</label>
                             <input type="text" id="loginIdentifier" required placeholder="Enter email or phone..." 
@@ -130,12 +126,12 @@
                                 class="w-full bg-slate-950 text-slate-200 text-sm px-4 py-3.5 rounded-xl border border-slate-800 focus:outline-none focus:border-emerald-500 transition">
                         </div>
 
-                        <button type="submit" class="w-full bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 text-white font-bold py-4 rounded-xl shadow-lg shadow-emerald-600/30 transition text-sm mt-2">
+                        <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-4 rounded-xl shadow-lg shadow-emerald-600/30 transition text-sm mt-2">
                             Log In to Dashboard →
                         </button>
                     </form>
 
-                    <div class="text-center mt-6">
+                    <div class="mt-6">
                         <button onclick="switchAuthMode('signup')" class="text-emerald-400 hover:text-emerald-300 text-xs font-semibold transition">
                             Don't have an account? Create one here
                         </button>

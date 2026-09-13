@@ -268,6 +268,11 @@
                         const isMyTask = isAccepted && t.helper && helperProfile.name && t.helper.name.toLowerCase() === helperProfile.name.toLowerCase();
                         const customerName = t.customerName || t.studentName || 'Customer';
 
+                        // Robust fallbacks for Title and Wage across different database schemas
+                        const taskTitle = t.title || t.name || t.taskTitle || 'Untitled Task';
+                        const taskDescription = t.description || t.details || '';
+                        const taskBudget = t.budget || (t.wage ? `BDT ${t.wage}` : (t.price ? `BDT ${t.price}` : 'BDT 0'));
+
                         // Render actual messages dynamically without hardcoded fallback text
                         const messagesHtml = (t.messages && t.messages.length > 0)
                             ? t.messages.map(m => `
@@ -284,21 +289,21 @@
                                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                                     <div class="space-y-1">
                                         <div class="flex items-center gap-2">
-                                            <span class="bg-emerald-500/10 text-emerald-400 text-xs font-bold px-2.5 py-0.5 rounded uppercase">${t.jobType || 'Task'}</span>
-                                            <span class="text-xs text-slate-400">📍 ${t.area}</span>
+                                            <span class="bg-emerald-500/10 text-emerald-400 text-xs font-bold px-2.5 py-0.5 rounded uppercase">${escapeHtml(t.jobType || 'Task')}</span>
+                                            <span class="text-xs text-slate-400">📍 ${escapeHtml(t.area || '')}</span>
                                         </div>
-                                        <h3 class="text-xl font-bold text-white">${t.title || 'Untitled Task'}</h3>
-                                        <p class="text-sm text-slate-300">${t.description || ''}</p>
+                                        <h3 class="text-xl font-bold text-white">${escapeHtml(taskTitle)}</h3>
+                                        <p class="text-sm text-slate-300">${escapeHtml(taskDescription)}</p>
                                     </div>
                                     <div class="text-right">
-                                        <div class="text-emerald-400 font-extrabold text-lg">${t.budget || 'BDT 0'}</div>
-                                        <div class="text-xs text-slate-400 mt-1">Status: <span class="text-white font-semibold">${t.status || 'Pending'}</span></div>
+                                        <div class="text-emerald-400 font-extrabold text-lg">${escapeHtml(taskBudget)}</div>
+                                        <div class="text-xs text-slate-400 mt-1">Status: <span class="text-white font-semibold">${escapeHtml(t.status || 'Pending')}</span></div>
                                     </div>
                                 </div>
 
                                 <div class="flex items-center justify-between pt-3 border-t border-slate-800/80">
                                     <div class="text-xs text-slate-400">
-                                        ${isAccepted ? `<span class="text-emerald-400 font-bold">✓ Assigned Helper:</span> ${t.helper ? (t.helper.name || t.helper) : 'Assigned'}` : 'Waiting for helper acceptance'}
+                                        ${isAccepted ? `<span class="text-emerald-400 font-bold">✓ Assigned Helper:</span> ${t.helper ? escapeHtml(t.helper.name || t.helper) : 'Assigned'}` : 'Waiting for helper acceptance'}
                                     </div>
                                     <div>
                                         ${!isAccepted ? `<button onclick="acceptTask('${t._id}')" class="bg-emerald-600 hover:bg-emerald-500 text-white px-5 py-2.5 rounded-xl text-xs font-bold transition shadow-lg shadow-emerald-600/20">Accept Job</button>` : ''}
@@ -364,7 +369,8 @@
             const timeStr = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
             
             // Remove empty placeholder state if present
-            if (messagesContainer.querySelector('italic')) {
+            const italicEl = messagesContainer.querySelector('p.italic');
+            if (italicEl) {
                 messagesContainer.innerHTML = '';
             }
 
@@ -380,7 +386,6 @@
             input.value = '';
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
 
-            // Optional backend sync if endpoint exists
             try {
                 await fetch(`/api/tasks/${taskId}/messages`, {
                     method: 'POST',

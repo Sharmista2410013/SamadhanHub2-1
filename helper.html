@@ -21,7 +21,6 @@
         html.light-mode input, html.light-mode select { background-color: #ffffff !important; color: #0f172a !important; border-color: #cbd5e1 !important; }
     </style>
     <script>
-        // Define switcher globally right away to avoid reference errors
         function switchAuthMode(mode) {
             const signupSec = document.getElementById('signupSection');
             const loginSec = document.getElementById('loginSection');
@@ -348,15 +347,23 @@
 
                                 ${isMyTask ? `
                                     <div class="mt-4 pt-4 border-t border-slate-800 space-y-3 bg-slate-950/60 p-4 rounded-xl">
-                                        <span class="text-xs font-bold text-emerald-400 uppercase tracking-wider">💬 Live Chat with Customer (${t.name})</span>
-                                        <div id="chatBox_${t.id}" class="h-36 overflow-y-auto bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-2 text-xs">
+                                        <div class="flex justify-between items-center">
+                                            <span class="text-xs font-bold text-emerald-400 uppercase tracking-wider">💬 Live Chat with Customer (${t.name})</span>
+                                            <span class="text-[10px] text-slate-500">Press Enter to send</span>
+                                        </div>
+                                        <div id="chatBox_${t.id}" class="h-40 overflow-y-auto bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-2 text-xs flex flex-col">
                                             ${t.messages && t.messages.length > 0 
-                                                ? t.messages.map(m => `<div><strong class="${m.sender === helperProfile.name ? 'text-emerald-400' : 'text-indigo-400'}">${m.sender}:</strong> <span class="text-slate-200">${m.text}</span></div>`).join('')
-                                                : '<p class="text-slate-500 text-center italic mt-10">No messages yet. Say hello to the customer!</p>'
+                                                ? t.messages.map(m => `
+                                                    <div class="p-2 rounded-lg max-w-[85%] ${m.sender === helperProfile.name ? 'ml-auto bg-emerald-950/40 border border-emerald-500/20 text-right' : 'mr-auto bg-slate-900 border border-slate-800 text-left'}">
+                                                        <strong class="${m.sender === helperProfile.name ? 'text-emerald-400' : 'text-indigo-400'} block text-[10px] mb-0.5">${m.sender}</strong>
+                                                        <span class="text-slate-200">${m.text}</span>
+                                                    </div>
+                                                `).join('')
+                                                : '<p class="text-slate-500 text-center italic my-auto">No messages yet. Say hello to the customer!</p>'
                                             }
                                         </div>
                                         <div class="flex gap-2">
-                                            <input type="text" id="msgInput_${t.id}" placeholder="Type message to customer..." class="flex-1 bg-slate-950 text-slate-200 text-xs px-3 py-2.5 rounded-xl border border-slate-800 focus:outline-none focus:border-emerald-500">
+                                            <input type="text" id="msgInput_${t.id}" placeholder="Type message to customer..." onkeydown="if(event.key === 'Enter') sendHelperMessage('${t.id}')" class="flex-1 bg-slate-950 text-slate-200 text-xs px-3 py-2.5 rounded-xl border border-slate-800 focus:outline-none focus:border-emerald-500">
                                             <button type="button" onclick="sendHelperMessage('${t.id}')" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition">Send</button>
                                         </div>
                                     </div>
@@ -364,6 +371,16 @@
                             </div>
                         `;
                     }).join('');
+
+                    // Auto-scroll all active chat boxes to the bottom
+                    matchingTasks.forEach(t => {
+                        if (t.status === 'Accepted' && t.helper && helperProfile.name && t.helper.name.toLowerCase() === helperProfile.name.toLowerCase()) {
+                            const chatBox = document.getElementById(`chatBox_${t.id}`);
+                            if (chatBox) {
+                                chatBox.scrollTop = chatBox.scrollHeight;
+                            }
+                        }
+                    });
                 }
             } catch (err) {
                 console.error('Error fetching tasks from backend:', err);

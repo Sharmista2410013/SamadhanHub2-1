@@ -3,42 +3,171 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Helper Portal - Customer Chat & Dashboard</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Student Helper Portal - Samadhan Hub</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio"></script>
     <script>
-        tailwind.config = {
-            darkMode: 'class',
-        }
+        (function() {
+            const savedTheme = localStorage.getItem('samadhan_theme') || 'dark';
+            if (savedTheme === 'light') { document.documentElement.classList.add('light-mode'); }
+        })();
     </script>
+    <style>
+        html.light-mode body { background-color: #f8fafc !important; color: #0f172a !important; }
+        html.light-mode .bg-slate-950 { background-color: #f1f5f9 !important; }
+        html.light-mode .bg-slate-900\/90, html.light-mode .bg-slate-900 { background-color: #ffffff !important; border-color: #e2e8f0 !important; color: #0f172a !important; }
+        html.light-mode .text-white { color: #0f172a !important; }
+        html.light-mode .text-slate-400, html.light-mode .text-slate-300 { color: #475569 !important; }
+        html.light-mode input, html.light-mode select { background-color: #ffffff !important; color: #0f172a !important; border-color: #cbd5e1 !important; }
+    </style>
 </head>
-<body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100 h-screen flex flex-col transition-colors duration-200">
+<body class="bg-slate-950 font-sans text-slate-100 antialiased min-h-screen flex flex-col justify-between selection:bg-emerald-500 selection:text-white">
 
-    <!-- Navbar / Header -->
-    <header class="bg-indigo-600 dark:bg-indigo-900 text-white px-6 py-4 shadow-md flex justify-between items-center">
-        <h1 class="text-xl font-bold">Helper Portal</h1>
-        <div class="flex items-center space-x-4">
-            <!-- Theme Toggle Button -->
-            <button onclick="toggleGlobalTheme()" class="flex items-center space-x-1 bg-indigo-700 hover:bg-indigo-800 px-3 py-1.5 rounded-lg text-sm transition">
-                <span id="themeIcon">🌙</span>
-                <span id="themeText">Dark</span>
+    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-96 bg-emerald-600/10 blur-[130px] pointer-events-none"></div>
+
+    <!-- Navigation Bar -->
+    <nav class="relative z-50 max-w-7xl w-full mx-auto px-6 py-6 flex justify-between items-center border-b border-slate-800/60 backdrop-blur-md">
+        <a href="index.html" class="flex items-center gap-3 group">
+            <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-500 flex items-center justify-center text-white text-lg shadow-lg shadow-emerald-500/30">
+                🤝
+            </div>
+            <span class="text-xl font-black tracking-tight text-white uppercase">SAMADHAN <span class="text-emerald-400">HUB</span></span>
+        </a>
+        <div class="flex items-center space-x-6 text-sm font-medium text-slate-300">
+            <a href="index.html" class="hover:text-white transition">Overview</a>
+            <a href="customer.html" class="hover:text-white transition">Customer Portal</a>
+            <a href="helper.html" class="text-emerald-400 font-semibold">Student Helper</a>
+            <a href="expert.html" class="hover:text-white transition">Expert Portal</a>
+            <button onclick="toggleGlobalTheme()" id="themeToggleBtn" class="bg-slate-900 text-slate-300 border border-slate-800 px-3 py-2 rounded-xl text-xs font-semibold transition flex items-center gap-2">
+                <span id="themeIcon">🌙</span> <span id="themeText">Dark</span>
             </button>
-            <span class="text-sm bg-indigo-700 px-3 py-1 rounded-full">Status: Online</span>
-            <button onclick="logoutHelper()" class="text-sm bg-red-500 hover:bg-red-600 px-3 py-1 rounded transition">Logout</button>
         </div>
-    </header>
+    </nav>
 
-    <!-- Main Content Area -->
-    <main class="flex-1 p-6 overflow-y-auto">
-        <div class="max-w-4xl mx-auto bg-white dark:bg-gray-800 rounded-lg shadow p-6 border border-gray-200 dark:border-gray-700">
-            <h2 class="text-2xl font-semibold mb-2">Welcome Back, Helper!</h2>
-            <p class="text-gray-600 dark:text-gray-300">Manage your active customer requests and communicate instantly using the chat widget at the bottom right.</p>
+    <!-- Main Section -->
+    <main class="relative z-10 max-w-xl mx-auto px-6 py-12 w-full flex-1 flex flex-col justify-center">
+        
+        <!-- Auth Container (Signup / Login Cards) -->
+        <div id="authContainer">
+            
+            <!-- Signup Card (Matching your screenshot design) -->
+            <div id="signupSection">
+                <div class="bg-slate-900/90 border border-slate-800/80 p-8 rounded-3xl shadow-2xl backdrop-blur-md">
+                    
+                    <div class="text-center mb-8">
+                        <div class="inline-block bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs font-bold px-4 py-1.5 rounded-full uppercase tracking-widest mb-3">
+                            Student Helper Portal
+                        </div>
+                        <h1 class="text-3xl font-black text-white tracking-tight">Create Account</h1>
+                        <p class="text-slate-400 text-sm mt-1">Register your details to start accepting tasks</p>
+                    </div>
+
+                    <form id="helperSignupForm" class="space-y-5">
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Full Name</label>
+                            <input type="text" id="helperName" required placeholder="Enter your name..." 
+                                class="w-full bg-slate-950 text-slate-200 text-sm px-4 py-3.5 rounded-xl border border-slate-800 focus:outline-none focus:border-emerald-500 transition">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Email or Phone Number</label>
+                            <input type="text" id="helperIdentifier" required placeholder="Enter email or phone..." 
+                                class="w-full bg-slate-950 text-slate-200 text-sm px-4 py-3.5 rounded-xl border border-slate-800 focus:outline-none focus:border-emerald-500 transition">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Password</label>
+                            <input type="password" id="helperPassword" required placeholder="Create password..." 
+                                class="w-full bg-slate-950 text-slate-200 text-sm px-4 py-3.5 rounded-xl border border-slate-800 focus:outline-none focus:border-emerald-500 transition">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Service Region</label>
+                            <select id="helperArea" required 
+                                class="w-full bg-slate-950 text-slate-200 text-sm px-4 py-3.5 rounded-xl border border-slate-800 focus:outline-none focus:border-emerald-500 transition cursor-pointer">
+                                <option value="Motihar / University Campus" selected>Motihar / University Campus</option>
+                                <option value="Talaimari">Talaimari</option>
+                                <option value="Bhadra">Bhadra</option>
+                                <option value="Shaheb Bazar">Shaheb Bazar</option>
+                                <option value="Laxmipur">Laxmipur</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="w-full bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 text-white font-bold py-4 rounded-xl shadow-lg shadow-emerald-600/30 transition text-sm mt-2 flex items-center justify-center gap-2">
+                            Create Account 🚀
+                        </button>
+                    </form>
+
+                    <div class="text-center mt-6">
+                        <button onclick="switchAuthMode('login')" class="text-emerald-400 hover:text-emerald-300 text-xs font-semibold transition">
+                            Already have an account? Log in here
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Login Card -->
+            <div id="loginSection" class="hidden">
+                <div class="bg-slate-900/90 border border-slate-800/80 p-8 rounded-3xl shadow-2xl backdrop-blur-md">
+                    
+                    <div class="text-center mb-8">
+                        <div class="inline-block bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs font-bold px-4 py-1.5 rounded-full uppercase tracking-widest mb-3">
+                            Helper Account Access
+                        </div>
+                        <h1 class="text-3xl font-black text-white tracking-tight">Welcome Back</h1>
+                        <p class="text-slate-400 text-sm mt-1">Log in to manage your active tasks</p>
+                    </div>
+
+                    <form id="helperLoginForm" class="space-y-5">
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Email or Phone Number</label>
+                            <input type="text" id="loginIdentifier" required placeholder="Enter email or phone..." 
+                                class="w-full bg-slate-950 text-slate-200 text-sm px-4 py-3.5 rounded-xl border border-slate-800 focus:outline-none focus:border-emerald-500 transition">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Password</label>
+                            <input type="password" id="loginPassword" required placeholder="Enter your password..." 
+                                class="w-full bg-slate-950 text-slate-200 text-sm px-4 py-3.5 rounded-xl border border-slate-800 focus:outline-none focus:border-emerald-500 transition">
+                        </div>
+
+                        <button type="submit" class="w-full bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 text-white font-bold py-4 rounded-xl shadow-lg shadow-emerald-600/30 transition text-sm mt-2">
+                            Log In to Dashboard →
+                        </button>
+                    </form>
+
+                    <div class="text-center mt-6">
+                        <button onclick="switchAuthMode('signup')" class="text-emerald-400 hover:text-emerald-300 text-xs font-semibold transition">
+                            Don't have an account? Create one here
+                        </button>
+                    </div>
+                </div>
+            </div>
+
         </div>
+
+        <!-- Dashboard Section (Shown after successful login/signup) -->
+        <div id="dashboardSection" class="hidden space-y-6">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-800 pb-6">
+                <div>
+                    <span class="bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+                        Active Helper Dashboard
+                    </span>
+                    <h1 class="text-3xl font-black text-white mt-2">Tasks for <span id="welcomeArea" class="text-emerald-400">Region</span></h1>
+                    <p class="text-slate-400 text-sm mt-1">Logged in as <strong id="welcomeName" class="text-slate-200"></strong></p>
+                </div>
+                <button onclick="logoutHelper()" class="bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 px-4 py-2.5 rounded-xl text-xs font-semibold transition">
+                    Switch Account / Logout
+                </button>
+            </div>
+
+            <div id="jobQueueContainer" class="space-y-4"></div>
+        </div>
+
     </main>
 
     <!-- Floating Chat Toggle Button -->
     <div class="fixed bottom-6 right-6 z-50">
-        <button id="chatToggleBtn" onclick="toggleChat()" class="bg-indigo-600 hover:bg-indigo-700 text-white p-4 rounded-full shadow-lg flex items-center justify-center transition transform hover:scale-105">
+        <button id="chatToggleBtn" onclick="toggleChat()" class="bg-emerald-600 hover:bg-emerald-500 text-white p-4 rounded-full shadow-lg shadow-emerald-600/30 flex items-center justify-center transition transform hover:scale-105">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
             </svg>
@@ -46,39 +175,206 @@
     </div>
 
     <!-- Customer Chat Box Container -->
-    <div id="chatWindow" class="hidden fixed bottom-24 right-6 w-96 h-[500px] bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 z-50 flex flex-col overflow-hidden">
-        
-        <!-- Chat Header -->
-        <div class="bg-indigo-600 dark:bg-indigo-900 text-white px-4 py-3 flex justify-between items-center">
+    <div id="chatWindow" class="hidden fixed bottom-24 right-6 w-96 h-[500px] bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl z-50 flex flex-col overflow-hidden backdrop-blur-md">
+        <div class="bg-emerald-600 text-white px-4 py-3 flex justify-between items-center">
             <div class="flex items-center space-x-2">
-                <div class="w-3 h-3 bg-green-400 rounded-full"></div>
+                <div class="w-3 h-3 bg-white rounded-full"></div>
                 <h3 class="font-semibold text-sm">Customer Support Chat</h3>
             </div>
-            <button onclick="toggleChat()" class="text-indigo-200 hover:text-white text-lg font-bold">&times;</button>
+            <button onclick="toggleChat()" class="text-emerald-200 hover:text-white text-lg font-bold">&times;</button>
         </div>
 
-        <!-- Chat Messages Area -->
-        <div id="chatMessages" class="flex-1 p-4 overflow-y-auto space-y-3 bg-gray-50 dark:bg-gray-900">
+        <div id="chatMessages" class="flex-1 p-4 overflow-y-auto space-y-3 bg-slate-950">
             <div class="flex justify-start">
-                <div class="bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 p-3 rounded-lg shadow-sm max-w-[80%] text-sm border border-gray-100 dark:border-gray-700">
-                    Hello! I need help with my account. Are you available?
+                <div class="bg-slate-900 text-slate-200 p-3 rounded-xl shadow-sm max-w-[80%] text-sm border border-slate-800">
+                    Hello! I need assistance with my order request. Are you available?
                 </div>
             </div>
         </div>
 
-        <!-- Chat Input Form -->
-        <form id="chatForm" onsubmit="sendMessage(event)" class="p-3 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 flex items-center space-x-2">
+        <form id="chatForm" onsubmit="sendMessage(event)" class="p-3 bg-slate-900 border-t border-slate-800 flex items-center space-x-2">
             <input type="text" id="chatInput" placeholder="Type your message..." autocomplete="off" required
-                class="flex-1 border border-gray-300 dark:border-gray-600 bg-transparent rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
-            <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition">
+                class="flex-1 bg-slate-950 text-slate-200 border border-slate-800 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-emerald-500">
+            <button type="submit" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-xl text-sm font-medium transition">
                 Send
             </button>
         </form>
     </div>
 
+    <!-- Footer -->
+    <footer class="relative z-10 max-w-7xl w-full mx-auto px-6 py-8 border-t border-slate-800/80 text-center text-xs text-slate-500">
+        <p>Samadhan Hub Student Operations</p>
+    </footer>
+
     <!-- JavaScript Logic -->
     <script>
-        // Toggle Chat Box Open/Close
+        const helperData = JSON.parse(localStorage.getItem('samadhan_helper_profile'));
+        if (helperData) { showDashboard(helperData); }
+
+        function switchAuthMode(mode) {
+            const signupSec = document.getElementById('signupSection');
+            const loginSec = document.getElementById('loginSection');
+
+            if (mode === 'signup') {
+                signupSec.classList.remove('hidden');
+                loginSec.classList.add('hidden');
+            } else {
+                signupSec.classList.add('hidden');
+                loginSec.classList.remove('hidden');
+            }
+        }
+
+        document.getElementById('helperSignupForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const profile = {
+                name: document.getElementById('helperName').value.trim(),
+                identifier: document.getElementById('helperIdentifier').value.trim(),
+                area: document.getElementById('helperArea').value,
+                password: document.getElementById('helperPassword').value
+            };
+
+            try {
+                const res = await fetch('/api/helpers/signup', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(profile)
+                });
+                const data = await res.json();
+                if(!res.ok) {
+                    alert(data.message || 'Signup failed');
+                    return;
+                }
+            } catch (err) {
+                console.error('Backend sync warning:', err);
+            }
+
+            localStorage.setItem('samadhan_helper_profile', JSON.stringify(profile));
+            showDashboard(profile);
+        });
+
+        document.getElementById('helperLoginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const identifier = document.getElementById('loginIdentifier').value.trim();
+            const password = document.getElementById('loginPassword').value;
+
+            try {
+                const response = await fetch('/api/helpers/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ identifier, password })
+                });
+                const result = await response.json();
+
+                if (response.ok && result.helper) {
+                    localStorage.setItem('samadhan_helper_profile', JSON.stringify(result.helper));
+                    showDashboard(result.helper);
+                } else {
+                    alert(result.message || 'Invalid credentials or helper not found.');
+                }
+            } catch (err) {
+                console.error('Login fetch error:', err);
+                alert('Connection error during login.');
+            }
+        });
+
+        function showDashboard(profile) {
+            document.getElementById('authContainer').classList.add('hidden');
+            document.getElementById('dashboardSection').classList.remove('hidden');
+            document.getElementById('welcomeName').innerText = profile.name;
+            document.getElementById('welcomeArea').innerText = profile.area || 'Motihar / University Campus';
+            loadJobs(profile.area || 'Motihar / University Campus');
+        }
+
+        async function loadJobs(helperArea) {
+            const helperProfile = JSON.parse(localStorage.getItem('samadhan_helper_profile') || '{}');
+            const container = document.getElementById('jobQueueContainer');
+
+            try {
+                const response = await fetch('/api/tasks');
+                const allTasks = await response.json();
+
+                const matchingTasks = allTasks.filter(t => t.area === helperArea || !t.area);
+
+                if (matchingTasks.length === 0) {
+                    container.innerHTML = `
+                        <div class="bg-slate-900/80 border border-slate-800 p-10 rounded-3xl text-center text-slate-400 text-sm">
+                            <div class="text-3xl mb-2">📭</div>
+                            <p class="font-semibold text-white">No active tasks found for ${helperArea} on the backend.</p>
+                        </div>`;
+                } else {
+                    container.innerHTML = matchingTasks.map((t) => {
+                        const isAssigned = t.status === 'Accepted';
+                        const isMyTask = isAssigned && t.helper && helperProfile.name && t.helper.name.toLowerCase() === helperProfile.name.toLowerCase();
+
+                        return `
+                            <div class="bg-slate-900/80 border border-slate-800/80 p-6 rounded-2xl space-y-4 shadow-xl">
+                                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                                    <div class="space-y-1">
+                                        <div class="flex items-center gap-2">
+                                            <span class="bg-emerald-500/10 text-emerald-400 text-xs font-bold px-2.5 py-0.5 rounded uppercase">${t.jobType || 'Task'}</span>
+                                            <span class="text-xs text-slate-400">📍 ${t.area}</span>
+                                            <span class="text-xs text-slate-500">🕒 ${t.createdAt ? new Date(t.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : 'Just now'}</span>
+                                        </div>
+                                        <h3 class="text-lg font-bold text-white">${t.title || 'Untitled Task'}</h3>
+                                        <p class="text-sm text-slate-300">${t.description || ''}</p>
+                                    </div>
+                                    <div class="text-right">
+                                        <div class="text-emerald-400 font-extrabold text-lg">${t.budget || 'BDT 0'}</div>
+                                        <div class="text-xs text-slate-400">Status: <span class="text-white font-semibold">${t.status || 'Pending'}</span></div>
+                                    </div>
+                                </div>
+                                <div class="flex justify-end gap-2 pt-2 border-t border-slate-800/60">
+                                    ${!isAssigned ? `<button onclick="acceptTask('${t._id}')" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-xl text-xs font-bold transition">Accept Job</button>` : ''}
+                                    ${isMyTask ? `<span class="bg-emerald-500/20 text-emerald-300 px-3 py-1.5 rounded-xl text-xs font-semibold">Assigned to You</span>` : ''}
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                }
+            } catch (err) {
+                console.error('Error loading tasks:', err);
+                container.innerHTML = `<div class="text-slate-400 text-sm p-4">Failed to load tasks from backend.</div>`;
+            }
+        }
+
+        async function acceptTask(taskId) {
+            const helperProfile = JSON.parse(localStorage.getItem('samadhan_helper_profile') || '{}');
+            try {
+                const res = await fetch(`/api/tasks/${taskId}/accept`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ helper: helperProfile })
+                });
+                if (res.ok) {
+                    loadJobs(helperProfile.area || 'Motihar / University Campus');
+                } else {
+                    alert('Could not accept task.');
+                }
+            } catch(e) {
+                console.error(e);
+            }
+        }
+
+        function logoutHelper() {
+            localStorage.removeItem('samadhan_helper_profile');
+            location.reload();
+        }
+
+        function toggleGlobalTheme() {
+            const html = document.documentElement;
+            const isLight = html.classList.toggle('light-mode');
+            if (isLight) {
+                localStorage.setItem('samadhan_theme', 'light');
+                document.getElementById('themeIcon').innerText = '☀️';
+                document.getElementById('themeText').innerText = 'Light';
+            } else {
+                localStorage.setItem('samadhan_theme', 'dark');
+                document.getElementById('themeIcon').innerText = '🌙';
+                document.getElementById('themeText').innerText = 'Dark';
+            }
+        }
+
+        // Chat Box Toggle and Messaging Logic
         function toggleChat() {
             const chatWindow = document.getElementById('chatWindow');
             const chatInput = document.getElementById('chatInput');
@@ -92,7 +388,6 @@
             }
         }
 
-        // Send Message Handler
         function sendMessage(event) {
             event.preventDefault();
             const input = document.getElementById('chatInput');
@@ -101,11 +396,10 @@
 
             if (!messageText) return;
 
-            // Append Helper's message
             const messageDiv = document.createElement('div');
             messageDiv.className = 'flex justify-end';
             messageDiv.innerHTML = `
-                <div class="bg-indigo-600 text-white p-3 rounded-lg shadow-sm max-w-[80%] text-sm">
+                <div class="bg-emerald-600 text-white p-3 rounded-xl shadow-sm max-w-[80%] text-sm">
                     ${escapeHtml(messageText)}
                 </div>
             `;
@@ -114,13 +408,12 @@
             input.value = '';
             scrollToBottom();
 
-            // Simulate automatic response mockup
             setTimeout(() => {
                 const replyDiv = document.createElement('div');
                 replyDiv.className = 'flex justify-start';
                 replyDiv.innerHTML = `
-                    <div class="bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 p-3 rounded-lg shadow-sm max-w-[80%] text-sm border border-gray-100 dark:border-gray-700">
-                        Thanks for the update!
+                    <div class="bg-slate-900 text-slate-200 p-3 rounded-xl shadow-sm max-w-[80%] text-sm border border-slate-800">
+                        Thanks for your response! I'll check on that.
                     </div>
                 `;
                 messagesContainer.appendChild(replyDiv);
@@ -128,84 +421,14 @@
             }, 1000);
         }
 
-        // Auto-scroll helper
         function scrollToBottom() {
             const messagesContainer = document.getElementById('chatMessages');
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
         }
 
-        // Security helper to prevent XSS injection
         function escapeHtml(text) {
             const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
             return text.replace(/[&<>"']/g, m => map[m]);
-        }
-
-        // --- Your Custom Script Logic Integrated Below ---
-
-        const verifyResetBtn = document.getElementById('verifyResetBtn');
-        const modal = document.getElementById('resetModal'); // Ensure element exists if modal used
-        let savedIdentifier = ""; // Defined globally or scoped appropriately for your workflow
-
-        if (verifyResetBtn) {
-            verifyResetBtn.onclick = async () => {
-                const code = document.getElementById('resetCodeInput').value.trim();
-                const newPassword = document.getElementById('newPasswordInput').value.trim();
-                const msg = document.getElementById('resetMsg');
-
-                if (!code || !newPassword) {
-                    msg.style.color = '#f87171';
-                    msg.textContent = 'Please fill in both fields.';
-                    return;
-                }
-
-                msg.style.color = '#94a3b8';
-                msg.textContent = 'Resetting password...';
-
-                try {
-                    const res = await fetch('/api/auth/reset-password', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ identifier: savedIdentifier, code, newPassword })
-                    });
-                    const data = await res.json();
-
-                    if (res.ok) {
-                        msg.style.color = '#34d399';
-                        msg.textContent = data.message;
-                        setTimeout(() => {
-                            if (modal) modal.style.display = 'none';
-                        }, 2000);
-                    } else {
-                        msg.style.color = '#f87171';
-                        msg.textContent = data.error || 'Failed to reset.';
-                    }
-                } catch (err) {
-                    msg.style.color = '#f87171';
-                    msg.textContent = 'Network error. Try again.';
-                }
-            };
-        }
-
-        function logoutHelper() {
-            localStorage.removeItem('samadhan_helper_profile');
-            location.reload();
-        }
-
-        function toggleGlobalTheme() {
-            const html = document.documentElement;
-            const isLight = html.classList.toggle('light-mode');
-            // Alternatively working with Tailwind dark class:
-            const isDark = html.classList.toggle('dark');
-            
-            if (!isDark) {
-                localStorage.setItem('samadhan_theme', 'light');
-                document.getElementById('themeIcon').innerText = '☀️';
-                document.getElementById('themeText').innerText = 'Light';
-            } else {
-                localStorage.setItem('samadhan_theme', 'dark');
-                document.getElementById('themeIcon').innerText = '🌙';
-                document.getElementById('themeText').innerText = 'Dark';
-            }
         }
     </script>
 </body>

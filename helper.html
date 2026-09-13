@@ -3,561 +3,138 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Helper Portal - Samadhan Hub</title>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio"></script>
-    <script>
-        (function() {
-            const savedTheme = localStorage.getItem('samadhan_theme') || 'dark';
-            if (savedTheme === 'light') { document.documentElement.classList.add('light-mode'); }
-        })();
-    </script>
-    <style>
-        html.light-mode body { background-color: #f8fafc !important; color: #0f172a !important; }
-        html.light-mode .bg-slate-950 { background-color: #f1f5f9 !important; }
-        html.light-mode .bg-slate-900\/90, html.light-mode .bg-slate-900\/80, html.light-mode .bg-slate-900 { background-color: #ffffff !important; border-color: #e2e8f0 !important; color: #0f172a !important; }
-        html.light-mode .bg-slate-950\/60, html.light-mode .bg-slate-950\/80 { background-color: #f8fafc !important; border-color: #cbd5e1 !important; }
-        html.light-mode .text-white { color: #0f172a !important; }
-        html.light-mode .text-slate-300, html.light-mode .text-slate-400 { color: #475569 !important; }
-        html.light-mode input, html.light-mode select { background-color: #ffffff !important; color: #0f172a !important; border-color: #cbd5e1 !important; }
-    </style>
-    <script>
-        function switchAuthMode(mode) {
-            const signupSec = document.getElementById('signupSection');
-            const loginSec = document.getElementById('loginSection');
-            const tabSignup = document.getElementById('tabSignup');
-            const tabLogin = document.getElementById('tabLogin');
-
-            if (!signupSec || !loginSec) return;
-
-            if (mode === 'signup') {
-                signupSec.classList.remove('hidden');
-                loginSec.classList.add('hidden');
-                tabSignup.className = "px-5 py-2 rounded-xl text-xs font-bold transition bg-emerald-600 text-white shadow-md";
-                tabLogin.className = "px-5 py-2 rounded-xl text-xs font-bold transition text-slate-400 hover:text-white";
-            } else {
-                signupSec.classList.add('hidden');
-                loginSec.classList.remove('hidden');
-                tabLogin.className = "px-5 py-2 rounded-xl text-xs font-bold transition bg-emerald-600 text-white shadow-md";
-                tabSignup.className = "px-5 py-2 rounded-xl text-xs font-bold transition text-slate-400 hover:text-white";
-            }
-        }
-    </script>
+    <title>Helper Dashboard - Customer Chat</title>
+    <!-- Tailwind CSS for modern, clean UI -->
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-slate-950 font-sans text-slate-100 antialiased min-h-screen flex flex-col justify-between selection:bg-emerald-500 selection:text-white">
+<body class="bg-gray-50 h-screen flex flex-col">
 
-    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-96 bg-emerald-600/10 blur-[130px] pointer-events-none"></div>
-
-    <nav class="relative z-50 max-w-7xl w-full mx-auto px-6 py-6 flex justify-between items-center border-b border-slate-800/60 backdrop-blur-md">
-        <a href="index.html" class="flex items-center gap-3 group">
-            <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-500 flex items-center justify-center text-white text-lg shadow-lg shadow-emerald-500/30">
-                🤝
-            </div>
-            <span class="text-xl font-black tracking-tight text-white uppercase">SAMADHAN <span class="text-emerald-400">HUB</span></span>
-        </a>
-        <div class="flex items-center space-x-6 text-sm font-medium text-slate-300">
-            <a href="index.html" class="hover:text-white transition">Overview</a>
-            <a href="customer.html" class="hover:text-white transition">Customer Portal</a>
-            <a href="helper.html" class="text-emerald-400 font-semibold">Student Helper</a>
-            <a href="expert.html" class="hover:text-white transition">Expert Portal</a>
-            <button onclick="toggleGlobalTheme()" id="themeToggleBtn" class="bg-slate-900 text-slate-300 border border-slate-800 px-3 py-2 rounded-xl text-xs font-semibold transition flex items-center gap-2">
-                <span id="themeIcon">🌙</span> <span id="themeText">Dark</span>
-            </button>
+    <!-- Navbar / Header -->
+    <header class="bg-indigo-600 text-white px-6 py-4 shadow-md flex justify-between items-center">
+        <h1 class="text-xl font-bold">Helper Portal</h1>
+        <div class="flex items-center space-x-4">
+            <span class="text-sm bg-indigo-700 px-3 py-1 rounded-full">Status: Online</span>
+            <button onclick="logoutHelper()" class="text-sm bg-red-500 hover:bg-red-600 px-3 py-1 rounded transition">Logout</button>
         </div>
-    </nav>
+    </header>
 
-    <main class="relative z-10 max-w-4xl mx-auto px-6 py-12 w-full">
-        
-        <!-- AUTH CONTAINER -->
-        <div id="authContainer">
-            <!-- Mode Switcher Tabs -->
-            <div class="flex justify-center mb-6">
-                <div class="bg-slate-900 border border-slate-800 p-1.5 rounded-2xl flex gap-2">
-                    <button type="button" onclick="switchAuthMode('signup')" id="tabSignup" class="px-5 py-2 rounded-xl text-xs font-bold transition bg-emerald-600 text-white shadow-md">Create Account</button>
-                    <button type="button" onclick="switchAuthMode('login')" id="tabLogin" class="px-5 py-2 rounded-xl text-xs font-bold transition text-slate-400 hover:text-white">Existing Login</button>
-                </div>
-            </div>
-
-            <!-- SIGNUP SECTION -->
-            <div id="signupSection">
-                <div class="mb-8 text-center">
-                    <span class="bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-widest">
-                        Student Registration Gateway
-                    </span>
-                    <h1 class="text-3xl md:text-4xl font-black text-white mt-3">Join as Student Helper</h1>
-                    <p class="text-slate-400 text-sm mt-1">Set up your credentials and preferred region to access local tasks.</p>
-                </div>
-
-                <div class="bg-slate-900/90 border border-slate-800/80 p-8 rounded-3xl shadow-2xl backdrop-blur-md max-w-2xl mx-auto">
-                    <form id="helperSignupForm" class="space-y-5">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Full Name</label>
-                                <input type="text" id="helperName" required placeholder="e.g., Tanvir Ahmed" class="w-full bg-slate-950 text-slate-200 text-sm px-4 py-3 rounded-xl border border-slate-800 focus:outline-none focus:border-emerald-500 transition">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Email or Phone Number</label>
-                                <input type="text" id="helperIdentifier" required placeholder="e.g., +8801700000000" class="w-full bg-slate-950 text-slate-200 text-sm px-4 py-3 rounded-xl border border-slate-800 focus:outline-none focus:border-emerald-500 transition">
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Institution Name</label>
-                                <input type="text" id="helperInst" required placeholder="e.g., Rajshahi University" class="w-full bg-slate-950 text-slate-200 text-sm px-4 py-3 rounded-xl border border-slate-800 focus:outline-none focus:border-emerald-500 transition">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Department</label>
-                                <input type="text" id="helperDept" required placeholder="e.g., EEE / CSE" class="w-full bg-slate-950 text-slate-200 text-sm px-4 py-3 rounded-xl border border-slate-800 focus:outline-none focus:border-emerald-500 transition">
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Preferred Region</label>
-                                <select id="helperArea" required class="w-full bg-slate-950 text-slate-200 text-sm px-4 py-3 rounded-xl border border-slate-800 focus:outline-none focus:border-emerald-500 transition cursor-pointer">
-                                    <option value="" disabled selected>Select service region...</option>
-                                    <option value="Motihar / Campus">Motihar / University Campus</option>
-                                    <option value="Talaimari">Talaimari</option>
-                                    <option value="Bhadra">Bhadra</option>
-                                    <option value="Shaheb Bazar">Shaheb Bazar</option>
-                                    <option value="Laxmipur">Laxmipur</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Secure Password</label>
-                                <input type="password" id="helperPassword" required placeholder="••••••••" class="w-full bg-slate-950 text-slate-200 text-sm px-4 py-3 rounded-xl border border-slate-800 focus:outline-none focus:border-emerald-500 transition">
-                            </div>
-                        </div>
-
-                        <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-emerald-600/30 transition text-sm mt-4">
-                            Create Helper Account & View Live Jobs →
-                        </button>
-                    </form>
-                </div>
-            </div>
-
-            <!-- LOGIN SECTION -->
-            <div id="loginSection" class="hidden">
-                <div class="mb-8 text-center">
-                    <span class="bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-widest">
-                        Helper Account Access
-                    </span>
-                    <h1 class="text-3xl md:text-4xl font-black text-white mt-3">Welcome Back, Helper</h1>
-                    <p class="text-slate-400 text-sm mt-1">Enter your email/phone and password to access your active tasks.</p>
-                </div>
-
-                <div class="bg-slate-900/90 border border-slate-800/80 p-8 rounded-3xl shadow-2xl backdrop-blur-md max-w-md mx-auto">
-                    <form id="helperLoginForm" class="space-y-5">
-                        <div>
-                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Email or Phone Number</label>
-                            <input type="text" id="loginIdentifier" required placeholder="e.g., +8801700000000" class="w-full bg-slate-950 text-slate-200 text-sm px-4 py-3 rounded-xl border border-slate-800 focus:outline-none focus:border-emerald-500 transition">
-                        </div>
-
-                        <div>
-                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Password</label>
-                            <input type="password" id="loginPassword" required placeholder="••••••••" class="w-full bg-slate-950 text-slate-200 text-sm px-4 py-3 rounded-xl border border-slate-800 focus:outline-none focus:border-emerald-500 transition">
-                        </div>
-
-                        <!-- Forgot Password Link -->
-                        <div class="text-right">
-                            <a href="#" id="openForgotModal" class="text-xs text-emerald-400 font-semibold hover:underline">Forgot Password?</a>
-                        </div>
-
-                        <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-emerald-600/30 transition text-sm mt-2">
-                            Log In to Dashboard →
-                        </button>
-                    </form>
-                </div>
-            </div>
+    <!-- Main Content Area -->
+    <main class="flex-1 p-6 overflow-y-auto">
+        <div class="max-w-4xl mx-auto bg-white rounded-lg shadow p-6">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-2">Welcome Back, Helper!</h2>
+            <p class="text-gray-600">Manage your active customer requests and communicate instantly using the chat widget at the bottom right.</p>
         </div>
-
-        <!-- ACTIVE DASHBOARD SECTION -->
-        <div id="dashboardSection" class="hidden space-y-8">
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-800 pb-6">
-                <div>
-                    <span class="bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-widest">
-                        Active Helper Dashboard (Backend Connected)
-                    </span>
-                    <h1 class="text-3xl font-black text-white mt-2">Tasks for <span id="welcomeArea" class="text-emerald-400">Region</span></h1>
-                    <p class="text-slate-400 text-sm mt-1">Logged in as <strong id="welcomeName" class="text-slate-200"></strong></p>
-                </div>
-                <button onclick="logoutHelper()" class="bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 px-4 py-2 rounded-xl text-xs font-semibold transition">
-                    Switch Account / Logout
-                </button>
-            </div>
-
-            <div id="jobQueueContainer" class="space-y-4"></div>
-        </div>
-
     </main>
 
-    <!-- Forgot Password Modal -->
-    <div id="resetModal" style="display: none;" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex justify-center items-center p-4">
-        <div class="bg-slate-900 border border-slate-800 p-8 rounded-3xl w-full max-w-sm shadow-2xl space-y-4 text-left">
-            <h3 class="text-xl font-black text-white">Reset Password</h3>
-            
-            <!-- Step 1: Request Code -->
-            <div id="step1Container" class="space-y-3">
-                <p class="text-xs text-slate-400">Enter your registered email or phone to receive a 6-digit verification code.</p>
-                <input type="text" id="resetIdentifier" placeholder="Email or Phone" class="w-full bg-slate-950 text-slate-200 text-sm px-4 py-3 rounded-xl border border-slate-800 focus:outline-none focus:border-emerald-500 transition">
-                <button id="sendCodeBtn" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl transition text-sm shadow-lg shadow-emerald-600/20">Send Reset Code</button>
-            </div>
-
-            <!-- Step 2: Enter Code & New Password -->
-            <div id="step2Container" class="space-y-3" style="display: none;">
-                <p class="text-xs text-slate-400">Enter the 6-digit code sent to your email and choose a new password.</p>
-                <input type="text" id="resetCodeInput" placeholder="6-digit Code" class="w-full bg-slate-950 text-slate-200 text-sm px-4 py-3 rounded-xl border border-slate-800 focus:outline-none focus:border-emerald-500 transition">
-                <input type="password" id="newPasswordInput" placeholder="New Password" class="w-full bg-slate-950 text-slate-200 text-sm px-4 py-3 rounded-xl border border-slate-800 focus:outline-none focus:border-emerald-500 transition">
-                <button id="verifyResetBtn" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl transition text-sm shadow-lg shadow-emerald-600/20">Reset Password</button>
-            </div>
-
-            <button id="closeModalBtn" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold py-2.5 rounded-xl transition text-xs">Cancel</button>
-            <p id="resetMsg" class="text-xs text-center mt-2"></p>
-        </div>
+    <!-- Floating Chat Toggle Button -->
+    <div class="fixed bottom-6 right-6 z-50">
+        <button id="chatToggleBtn" onclick="toggleChat()" class="bg-indigo-600 hover:bg-indigo-700 text-white p-4 rounded-full shadow-lg flex items-center justify-center transition transform hover:scale-105">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+            </svg>
+        </button>
     </div>
 
-    <footer class="relative z-10 max-w-7xl w-full mx-auto px-6 py-8 border-t border-slate-800/80 text-center text-xs text-slate-500">
-        <p>Samadhan Hub Student Operations</p>
-    </footer>
+    <!-- Customer Chat Box Modal/Container -->
+    <div id="chatWindow" class="hidden fixed bottom-24 right-6 w-96 h-[500px] bg-white rounded-xl shadow-2xl border border-gray-200 z-50 flex flex-col overflow-hidden">
+        
+        <!-- Chat Header -->
+        <div class="bg-indigo-600 text-white px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <div class="w-3 h-3 bg-green-400 rounded-full"></span></div>
+                <h3 class="font-semibold text-sm">Customer Support Chat</h3>
+            </div>
+            <button onclick="toggleChat()" class="text-indigo-200 hover:text-white text-lg font-bold">&times;</button>
+        </div>
 
+        <!-- Chat Messages Area -->
+        <div id="chatMessages" class="flex-1 p-4 overflow-y-auto space-y-3 bg-gray-50">
+            <div class="flex justify-start">
+                <div class="bg-white text-gray-800 p-3 rounded-lg shadow-sm max-w-[80%] text-sm border border-gray-100">
+                    Hello! I need help with my recent order. Are you available?
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat Input Form -->
+        <form id="chatForm" onsubmit="sendMessage(event)" class="p-3 bg-white border-t border-gray-200 flex items-center space-x-2">
+            <input type="text" id="chatInput" placeholder="Type your message..." autocomplete="off" required
+                class="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition">
+                Send
+            </button>
+        </form>
+    </div>
+
+    <!-- JavaScript Logic -->
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const helperData = JSON.parse(localStorage.getItem('samadhan_helper_profile') || 'null');
-            if (helperData && helperData.name) { 
-                showDashboard(helperData); 
-            }
-
-            const savedTheme = localStorage.getItem('samadhan_theme') || 'dark';
-            if (savedTheme === 'light') {
-                document.getElementById('themeIcon').innerText = '☀️';
-                document.getElementById('themeText').innerText = 'Light';
-            }
-        });
-
-        document.getElementById('helperSignupForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const profile = {
-                name: document.getElementById('helperName').value.trim(),
-                identifier: document.getElementById('helperIdentifier').value.trim(),
-                inst: document.getElementById('helperInst').value.trim(),
-                dept: document.getElementById('helperDept').value.trim(),
-                area: document.getElementById('helperArea').value,
-                password: document.getElementById('helperPassword').value
-            };
-
-            try {
-                const res = await fetch('/api/helpers/signup', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(profile)
-                });
-                const data = await res.json();
-                if(!res.ok) {
-                    alert(data.message || 'Signup failed on server');
-                    return;
-                }
-            } catch (err) {
-                console.warn('Backend sync warning (offline mode supported):', err);
-            }
-
-            localStorage.setItem('samadhan_helper_profile', JSON.stringify(profile));
-            showDashboard(profile);
-        });
-
-        document.getElementById('helperLoginForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const identifier = document.getElementById('loginIdentifier').value.trim();
-            const password = document.getElementById('loginPassword').value;
-
-            try {
-                const response = await fetch('/api/helpers/login', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ identifier, password })
-                });
-                const result = await response.json();
-
-                if (response.ok && result.helper) {
-                    localStorage.setItem('samadhan_helper_profile', JSON.stringify(result.helper));
-                    showDashboard(result.helper);
-                } else {
-                    alert(result.message || 'Invalid credentials or helper not found.');
-                }
-            } catch (err) {
-                console.error('Login fetch error:', err);
-                alert('Connection error during login. Please check server status.');
-            }
-        });
-
-        function showDashboard(profile) {
-            document.getElementById('authContainer').classList.add('hidden');
-            document.getElementById('dashboardSection').classList.remove('hidden');
-            document.getElementById('welcomeName').innerText = profile.name;
-            document.getElementById('welcomeArea').innerText = profile.area || 'Motihar / Campus';
-            loadJobs(profile.area || 'Motihar / Campus');
-        }
-
-        async function loadJobs(helperArea) {
-            const helperProfile = JSON.parse(localStorage.getItem('samadhan_helper_profile') || '{}');
-            const container = document.getElementById('jobQueueContainer');
-
-            try {
-                const response = await fetch('/api/tasks');
-                const allTasks = await response.json();
-
-                const matchingTasks = allTasks.filter(t => t.area === helperArea || !t.area);
-
-                if (matchingTasks.length === 0) {
-                    container.innerHTML = `
-                        <div class="bg-slate-900/80 border border-slate-800 p-10 rounded-3xl text-center text-slate-400 text-sm">
-                            <div class="text-3xl mb-2">📭</div>
-                            <p class="font-semibold text-white">No active tasks found for ${helperArea} on the backend.</p>
-                        </div>`;
-                } else {
-                    container.innerHTML = matchingTasks.map((t) => {
-                        const isAssigned = t.status === 'Accepted';
-                        const isMyTask = isAssigned && t.helper && helperProfile.name && t.helper.name.toLowerCase() === helperProfile.name.toLowerCase();
-
-                        return `
-                            <div class="bg-slate-900/80 border border-slate-800/80 p-6 rounded-2xl space-y-4 shadow-xl">
-                                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                                    <div class="space-y-1">
-                                        <div class="flex items-center gap-2">
-                                            <span class="bg-emerald-500/10 text-emerald-400 text-xs font-bold px-2.5 py-0.5 rounded uppercase">${t.jobType || 'Task'}</span>
-                                            <span class="text-xs text-slate-400">📍 ${t.area}</span>
-                                            <span class="text-xs px-2 py-0.5 rounded font-bold ${t.status === 'Accepted' ? 'bg-emerald-500/20 text-emerald-300' : 'bg-amber-500/20 text-amber-300'}">${t.status}</span>
-                                        </div>
-                                        <h3 class="font-bold text-white text-lg">Customer: ${t.name}</h3>
-                                        <p class="text-slate-300 text-sm">${t.desc}</p>
-                                        <div class="text-xs text-slate-400 pt-1">💰 Wage: <strong class="text-emerald-400">${t.wages}</strong></div>
-                                    </div>
-
-                                    <div>
-                                        ${!isAssigned ? `
-                                            <button type="button" onclick="acceptTask('${t.id}')" class="bg-emerald-600 hover:bg-emerald-500 text-white font-semibold px-6 py-3 rounded-xl transition text-sm shadow-lg shadow-emerald-600/20 whitespace-nowrap">
-                                                Accept Task ⚡
-                                            </button>
-                                        ` : isMyTask ? `
-                                            <span class="text-xs bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 px-4 py-2 rounded-xl font-bold flex items-center gap-1.5">✓ Assigned to You</span>
-                                        ` : `
-                                            <span class="text-xs bg-slate-800 text-slate-400 px-4 py-2 rounded-xl font-medium">Claimed by another helper</span>
-                                        `}
-                                    </div>
-                                </div>
-
-                                ${isMyTask ? `
-                                    <div class="mt-4 pt-4 border-t border-slate-800 space-y-3 bg-slate-950/60 p-4 rounded-xl">
-                                        <div class="flex justify-between items-center">
-                                            <span class="text-xs font-bold text-emerald-400 uppercase tracking-wider">💬 Live Chat with Customer (${t.name})</span>
-                                            <span class="text-[10px] text-slate-500">Press Enter to send</span>
-                                        </div>
-                                        <div id="chatBox_${t.id}" class="h-40 overflow-y-auto bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-2 text-xs flex flex-col">
-                                            ${t.messages && t.messages.length > 0 
-                                                ? t.messages.map(m => `
-                                                    <div class="p-2 rounded-lg max-w-[85%] ${m.sender === helperProfile.name ? 'ml-auto bg-emerald-950/40 border border-emerald-500/20 text-right' : 'mr-auto bg-slate-900 border border-slate-800 text-left'}">
-                                                        <strong class="${m.sender === helperProfile.name ? 'text-emerald-400' : 'text-indigo-400'} block text-[10px] mb-0.5">${m.sender}</strong>
-                                                        <span class="text-slate-200">${m.text}</span>
-                                                    </div>
-                                                `).join('')
-                                                : '<p class="text-slate-500 text-center italic my-auto">No messages yet. Say hello to the customer!</p>'
-                                            }
-                                        </div>
-                                        <div class="flex gap-2">
-                                            <input type="text" id="msgInput_${t.id}" placeholder="Type message to customer..." onkeydown="if(event.key === 'Enter') sendHelperMessage('${t.id}')" class="flex-1 bg-slate-950 text-slate-200 text-xs px-3 py-2.5 rounded-xl border border-slate-800 focus:outline-none focus:border-emerald-500">
-                                            <button type="button" onclick="sendHelperMessage('${t.id}')" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition">Send</button>
-                                        </div>
-                                    </div>
-                                ` : ''}
-                            </div>
-                        `;
-                    }).join('');
-
-                    // Auto-scroll all active chat boxes to the bottom
-                    matchingTasks.forEach(t => {
-                        if (t.status === 'Accepted' && t.helper && helperProfile.name && t.helper.name.toLowerCase() === helperProfile.name.toLowerCase()) {
-                            const chatBox = document.getElementById(`chatBox_${t.id}`);
-                            if (chatBox) {
-                                chatBox.scrollTop = chatBox.scrollHeight;
-                            }
-                        }
-                    });
-                }
-            } catch (err) {
-                console.error('Error fetching tasks from backend:', err);
-                container.innerHTML = `<div class="p-6 text-center text-red-400">Could not connect to backend server to load task queue.</div>`;
+        // Toggle Chat Box Open/Close
+        function toggleChat() {
+            const chatWindow = document.getElementById('chatWindow');
+            const chatInput = document.getElementById('chatInput');
+            
+            if (chatWindow.classList.contains('hidden')) {
+                chatWindow.classList.remove('hidden');
+                scrollToBottom();
+                chatInput.focus();
+            } else {
+                chatWindow.classList.add('hidden');
             }
         }
 
-        async function acceptTask(taskId) {
-            const helperProfile = JSON.parse(localStorage.getItem('samadhan_helper_profile'));
-            if(!helperProfile) return;
+        // Send Message Handler
+        function sendMessage(event) {
+            event.preventDefault();
+            const input = document.getElementById('chatInput');
+            const messagesContainer = document.getElementById('chatMessages');
+            const messageText = input.value.trim();
 
-            try {
-                const response = await fetch(`/api/tasks/${taskId}/accept`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        helperData: {
-                            name: helperProfile.name,
-                            inst: helperProfile.inst,
-                            dept: helperProfile.dept
-                        }
-                    })
-                });
+            if (!messageText) return;
 
-                if (response.ok) {
-                    loadJobs(helperProfile.area);
-                } else {
-                    alert('Failed to accept task');
-                }
-            } catch (err) {
-                console.error('Connection error:', err);
-            }
+            // Append Helper's message
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'flex justify-end';
+            messageDiv.innerHTML = `
+                <div class="bg-indigo-600 text-white p-3 rounded-lg shadow-sm max-w-[80%] text-sm">
+                    ${escapeHtml(messageText)}
+                </div>
+            `;
+            messagesContainer.appendChild(messageDiv);
+
+            // Clear input & scroll to latest
+            input.value = '';
+            scrollToBottom();
+
+            // Simulate automatic response mockup (replace with real WebSocket/Backend API call if needed)
+            setTimeout(() => {
+                const replyDiv = document.createElement('div');
+                replyDiv.className = 'flex justify-start';
+                replyDiv.innerHTML = `
+                    <div class="bg-white text-gray-800 p-3 rounded-lg shadow-sm max-w-[80%] text-sm border border-gray-100">
+                        Thanks for getting back to me!
+                    </div>
+                `;
+                messagesContainer.appendChild(replyDiv);
+                scrollToBottom();
+            }, 1000);
         }
 
-        async function sendHelperMessage(taskId) {
-            const input = document.getElementById(`msgInput_${taskId}`);
-            const text = input.value.trim();
-            if(!text) return;
-
-            const helperProfile = JSON.parse(localStorage.getItem('samadhan_helper_profile'));
-
-            try {
-                const response = await fetch(`/api/tasks/${taskId}/chat`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        sender: helperProfile.name,
-                        text: text
-                    })
-                });
-
-                if (response.ok) {
-                    input.value = '';
-                    loadJobs(helperProfile.area);
-                }
-            } catch (err) {
-                console.error('Chat error:', err);
-            }
+        // Auto-scroll helper
+        function scrollToBottom() {
+            const messagesContainer = document.getElementById('chatMessages');
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
         }
 
-        // Forgot Password Modal Script for Helper
-        const modal = document.getElementById('resetModal');
-        const openBtn = document.getElementById('openForgotModal');
-        const closeBtn = document.getElementById('closeModalBtn');
-        const sendCodeBtn = document.getElementById('sendCodeBtn');
-        const verifyResetBtn = document.getElementById('verifyResetBtn');
-        let savedIdentifier = '';
-
-        if (openBtn) {
-            openBtn.onclick = (e) => { 
-                e.preventDefault(); 
-                modal.style.display = 'flex'; 
-                document.getElementById('step1Container').style.display = 'block';
-                document.getElementById('step2Container').style.display = 'none';
-                document.getElementById('resetMsg').textContent = '';
-                document.getElementById('resetIdentifier').value = '';
-            };
-        }
-        if (closeBtn) {
-            closeBtn.onclick = () => { modal.style.display = 'none'; };
+        // Security helper to prevent XSS injection
+        function escapeHtml(text) {
+            const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
+            return text.replace(/[&<>"']/g, m => map[m]);
         }
 
-        if (sendCodeBtn) {
-            sendCodeBtn.onclick = async () => {
-                savedIdentifier = document.getElementById('resetIdentifier').value.trim();
-                const msg = document.getElementById('resetMsg');
-                
-                if (!savedIdentifier) {
-                    msg.style.color = '#f87171';
-                    msg.textContent = 'Please enter your email or phone.';
-                    return;
-                }
-
-                msg.style.color = '#94a3b8';
-                msg.textContent = 'Sending code...';
-
-                try {
-                    const res = await fetch('/api/auth/forgot-password', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ identifier: savedIdentifier })
-                    });
-                    const data = await res.json();
-
-                    if (res.ok) {
-                        msg.style.color = '#34d399';
-                        msg.textContent = data.message;
-                        document.getElementById('step1Container').style.display = 'none';
-                        document.getElementById('step2Container').style.display = 'block';
-                    } else {
-                        msg.style.color = '#f87171';
-                        msg.textContent = data.error || 'Failed to send code.';
-                    }
-                } catch (err) {
-                    msg.style.color = '#f87171';
-                    msg.textContent = 'Network error. Try again.';
-                }
-            };
-        }
-
-        if (verifyResetBtn) {
-            verifyResetBtn.onclick = async () => {
-                const code = document.getElementById('resetCodeInput').value.trim();
-                const newPassword = document.getElementById('newPasswordInput').value.trim();
-                const msg = document.getElementById('resetMsg');
-
-                if (!code || !newPassword) {
-                    msg.style.color = '#f87171';
-                    msg.textContent = 'Please fill in both fields.';
-                    return;
-                }
-
-                msg.style.color = '#94a3b8';
-                msg.textContent = 'Resetting password...';
-
-                try {
-                    const res = await fetch('/api/auth/reset-password', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ identifier: savedIdentifier, code, newPassword })
-                    });
-                    const data = await res.json();
-
-                    if (res.ok) {
-                        msg.style.color = '#34d399';
-                        msg.textContent = data.message;
-                        setTimeout(() => {
-                            modal.style.display = 'none';
-                        }, 2000);
-                    } else {
-                        msg.style.color = '#f87171';
-                        msg.textContent = data.error || 'Failed to reset.';
-                    }
-                } catch (err) {
-                    msg.style.color = '#f87171';
-                    msg.textContent = 'Network error. Try again.';
-                }
-            };
-        }
-
+        // Logout helper function
         function logoutHelper() {
             localStorage.removeItem('samadhan_helper_profile');
             location.reload();
-        }
-
-        function toggleGlobalTheme() {
-            const html = document.documentElement;
-            const isLight = html.classList.toggle('light-mode');
-            if (isLight) {
-                localStorage.setItem('samadhan_theme', 'light');
-                document.getElementById('themeIcon').innerText = '☀️';
-                document.getElementById('themeText').innerText = 'Light';
-            } else {
-                localStorage.setItem('samadhan_theme', 'dark');
-                document.getElementById('themeIcon').innerText = '🌙';
-                document.getElementById('themeText').innerText = 'Dark';
-            }
         }
     </script>
 </body>
